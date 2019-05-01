@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ConsulationArchiveBloc
@@ -15,7 +16,7 @@ class ConsulationArchiveBloc
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -24,30 +25,37 @@ class ConsulationArchiveBloc
     /**
      * @var int
      *
-     * @ORM\Column(name="numeroBloc", type="integer")
+     * @ORM\Column(type="integer")
      */
-    private $numeroBloc;
+    private $docId;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="nombreBloc", type="integer")
+     * @ORM\Column(type="integer")
      */
-    private $nombreBloc;
+    private $numeroBloc;
 
     /**
      * @var \DateTime
-     *
-     * @ORM\Column(name="dateEnvoi", type="datetime")
+     * @Assert\DateTime(message="Le format attendu est dateTime et non : '{{ value }}'.")
+     * @ORM\Column(type="datetime")
      */
     private $dateEnvoi;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="envoye", type="boolean")
+     * @var boolean
+     * @Assert\Type("boolean")
+     * @ORM\Column(type="boolean")
      */
     private $envoye;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ConsultationArchive")
+     * @ORM\JoinColumn(name="consultation_archive_id", referencedColumnName="id")
+     */
+    private $consultationArchive;
+
 
 
     /**
@@ -85,30 +93,6 @@ class ConsulationArchiveBloc
     }
 
     /**
-     * Set nombreBloc
-     *
-     * @param integer $nombreBloc
-     *
-     * @return ConsulationArchiveBloc
-     */
-    public function setNombreBloc($nombreBloc)
-    {
-        $this->nombreBloc = $nombreBloc;
-
-        return $this;
-    }
-
-    /**
-     * Get nombreBloc
-     *
-     * @return int
-     */
-    public function getNombreBloc()
-    {
-        return $this->nombreBloc;
-    }
-
-    /**
      * Set dateEnvoi
      *
      * @param \DateTime $dateEnvoi
@@ -122,30 +106,54 @@ class ConsulationArchiveBloc
         return $this;
     }
 
-    /**
-     * Get dateEnvoi
-     *
-     * @return \DateTime
-     */
+
     public function getDateEnvoi()
     {
         return $this->dateEnvoi;
     }
 
-    /**
-     * @return \DateTime
-     */
+
     public function getEnvoye ()
     {
         return $this->envoye;
     }
 
-    /**
-     * @param \DateTime $envoye
-     */
+
     public function setEnvoye ( $envoye )
     {
         $this->envoye = $envoye;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocId ()
+    {
+        return $this->docId;
+    }
+
+    /**
+     * @param int $docId
+     */
+    public function setDocId ( $docId )
+    {
+        $this->docId = $docId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConsultationArchive ()
+    {
+        return $this->consultationArchive;
+    }
+
+    /**
+     * @param mixed $consultationArchive
+     */
+    public function setConsultationArchive ( $consultationArchive )
+    {
+        $this->consultationArchive = $consultationArchive;
     }
 }
 

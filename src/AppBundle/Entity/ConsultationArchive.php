@@ -16,7 +16,7 @@ class ConsultationArchive
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -25,25 +25,27 @@ class ConsultationArchive
     /**
      * @var string
      *
-     * @ORM\Column(name="localPath", type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $localPath;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="status", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $status;
 
-
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $nombreBloc;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="dateEnvoi", type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      * @Assert\DateTime(message="Le format attendu est dateTime et non : '{{ value }}'.")
-     * @var string A "Y-m-d H:i:s" formatted value
      */
     private $dateEnvoi;
 
@@ -113,11 +115,8 @@ class ConsultationArchive
     }
 
     /**
-     * Set dateEnvoi
-     *
-     * @param \DateTime $dateEnvoi
-     *
-     * @return ConsultationArchive
+     * @param $dateEnvoi
+     * @return $this
      */
     public function setDateEnvoi($dateEnvoi)
     {
@@ -127,9 +126,7 @@ class ConsultationArchive
     }
 
     /**
-     * Get dateEnvoi
-     *
-     * @return \DateTime
+     * @return mixed
      */
     public function getDateEnvoi()
     {
@@ -150,6 +147,22 @@ class ConsultationArchive
     public function setConsultation ( $consultation )
     {
         $this->consultation = $consultation;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNombreBloc ()
+    {
+        return $this->nombreBloc;
+    }
+
+    /**
+     * @param int $nombreBloc
+     */
+    public function setNombreBloc ( $nombreBloc )
+    {
+        $this->nombreBloc = $nombreBloc;
     }
 }
 
