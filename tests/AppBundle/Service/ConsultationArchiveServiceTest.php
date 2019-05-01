@@ -33,9 +33,6 @@ class ConsultationArchiveServiceTest extends TestCase
         } else {
             $this->assertEquals($expected, $actual);
         }
-
-
-
     }
 
     public function dataProvider(){
