@@ -16,7 +16,7 @@ class Consultation
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer")
+     * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -25,10 +25,16 @@ class Consultation
     /**
      * @var string
      *
-     * @ORM\Column(name="reference", type="string", length=255)
+     * @ORM\Column(type="string", length=255)
      */
     private $reference;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $etatConsultation;
 
     /**
      * Get id
@@ -62,6 +68,22 @@ class Consultation
     public function getReference()
     {
         return $this->reference;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEtatConsultation ()
+    {
+        return $this->etatConsultation;
+    }
+
+    /**
+     * @param string $etatConsultation
+     */
+    public function setEtatConsultation ( $etatConsultation )
+    {
+        $this->etatConsultation = $etatConsultation;
     }
 }
 

@@ -39,6 +39,11 @@ class ConsultationFixture extends Fixture
      */
     private $em;
 
+    const INIT = 1;
+    const A_ARCHIVER = 5;
+    const ARCHIVE = 6;
+
+
     /**
      * ConsultationFixture constructor.
      * @param ValidatorInterface $validator
@@ -59,14 +64,37 @@ class ConsultationFixture extends Fixture
         $this->em = $em;
     }
 
+
+
     /**
      * @param ObjectManager $em
      */
     public function load(ObjectManager $em)
     {
-        $consultation = new Consultation();
-        $consultation->setReference ('REFERENCE_1');
-        $em->persist($consultation);
+        for($i = 0; $i <= 10; $i++){
+            $consultation = new Consultation();
+            $consultation->setReference ('REFERENCE_' . $i);
+            $consultation->setEtatConsultation (self::A_ARCHIVER);
+            $em->persist($consultation);
+        }
+
+
+
+        for($i = 11; $i <= 20; $i++){
+            $consultation = new Consultation();
+            $consultation->setReference ('REFERENCE_' . $i);
+            $consultation->setEtatConsultation (self::ARCHIVE);
+            $em->persist($consultation);
+        }
+
+
+        for($i = 21; $i <= 30; $i++){
+            $consultation = new Consultation();
+            $consultation->setReference ('REFERENCE_' . $i);
+            $consultation->setEtatConsultation (self::INIT);
+            $em->persist($consultation);
+        }
+
 
         $em->flush();
 

@@ -48,20 +48,16 @@ class ConsultationArchiveService{
         $this->container = $container;
     }
 
-
-
     /**
      * @param String $pathCsvData
      * format csv docId,localPath,numeroBloc,nombreBloc,dateEnvoi,consultation
      */
     public function populate($pathCsvData){
-
         $this->logger->info('Début');
         $exclude = [];
         $excludeBloc = [];
         if (($handle = fopen($pathCsvData, "r")) !== false) {
             $row = 0;
-            //id,localPath,status,dateEnvoi,consultation
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $row++;
                 if (count($data) != 6){
@@ -104,7 +100,7 @@ class ConsultationArchiveService{
                                     $consultation
                                 );
                                 $exclude[] = $consultationArchiveTmp->getConsultation () -> getId() ;
-                                $info = sprintf("La Consultation Archive pour la consultation %s est créée",
+                                $info = sprintf("La ConsultationArchive pour la consultation %s est créée",
                                     $consultationReference);
                                 $this->logger->info($info);
                                 $excludeBloc = [];
@@ -125,7 +121,7 @@ class ConsultationArchiveService{
                                     $row,
                                     $consultationArchiveTmp
                                 );
-                                $info = sprintf("La Consultation Archive Bloc pour la consultation %s est créée",
+                                $info = sprintf("La ConsultationArchiveBloc pour la consultation %s est créée",
                                     $consultationReference);
                                 $this->logger->info($info);
                                 $excludeBloc[] = $consultationArchiveBloc->getDocId ();
@@ -144,7 +140,6 @@ class ConsultationArchiveService{
             fclose($handle);
         }
     }
-
 
     /**
      * @param $idDoc
@@ -174,8 +169,6 @@ class ConsultationArchiveService{
 
         return $consultationArchiveBloc;
     }
-
-
 
     /**
      * @param Consultation $consultation
@@ -221,11 +214,7 @@ class ConsultationArchiveService{
         } catch(\Exception $e){
 
         }
-
-
         return $frenchdate;
-
-
     }
 }
 

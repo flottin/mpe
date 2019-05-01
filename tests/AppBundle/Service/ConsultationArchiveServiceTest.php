@@ -11,12 +11,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ConsultationArchiveServiceTest extends TestCase
 {
-
-
     /**
      * @dataProvider dataProvider
-     */
-    /**
      * @param $date
      * @param $expected
      * @throws \ReflectionException
@@ -29,15 +25,25 @@ class ConsultationArchiveServiceTest extends TestCase
         $em = $this->createMock (ObjectManager::class);
         $container = $this->createMock (ContainerInterface::class);
         $consultationArchiveService = new ConsultationArchiveService($validator, $em, $container);
-
         $actual = $consultationArchiveService->frenchToDateTime ($date);
+        if (null === $date){
+            $dateClass = DateTime::class;
+            /* @var \PHPUnit\Framework\string $dateClass */
+            $this->assertInstanceOf($dateClass, $actual);
+        } else {
+            $this->assertEquals($expected, $actual);
+        }
 
-        $this->assertEquals($expected, $actual);
+
+
     }
 
     public function dataProvider(){
+        yield ['2009/13/20', '2009/13/20'];
+        yield [null, true];
         yield ['09/13/2018', '09/13/2018'];
         yield ['12/10/2018', new DateTime('2018-10-12')];
         yield ['12/10/20188', '12/10/20188'];
+
     }
 }
