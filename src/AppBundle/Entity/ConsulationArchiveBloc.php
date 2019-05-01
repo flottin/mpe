@@ -46,9 +46,12 @@ class ConsulationArchiveBloc
     /**
      * @var boolean
      * @Assert\Type("boolean")
-     * @ORM\Column(type="boolean")
+     * @var string
+     *
+     * @ORM\Column(type="boolean", options={"default":true})
      */
-    private $envoye;
+    private $archive;
+
 
     /**
      * @ORM\ManyToOne(targetEntity="ConsultationArchive")
@@ -56,7 +59,21 @@ class ConsulationArchiveBloc
      */
     private $consultationArchive;
 
+    /**
+     * @return mixed
+     */
+    public function getArchive ()
+    {
+        return $this->archive;
+    }
 
+    /**
+     * @param mixed $archive
+     */
+    public function setArchive ( $archive )
+    {
+        $this->archive = $archive;
+    }
 
     /**
      * Get id
@@ -112,17 +129,6 @@ class ConsulationArchiveBloc
         return $this->dateEnvoi;
     }
 
-
-    public function getEnvoye ()
-    {
-        return $this->envoye;
-    }
-
-
-    public function setEnvoye ( $envoye )
-    {
-        $this->envoye = $envoye;
-    }
 
     /**
      * @return int

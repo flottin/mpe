@@ -1,8 +1,7 @@
 <?php
-
 namespace AppBundle\Command;
 
-use AppBundle\Service\ConsultationArchiveService;
+use AppBundle\Service\ConsultationArchiveAtlasService;
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,21 +10,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConsultationArchiveAtlasCommand extends ContainerAwareCommand
 {
     /**
-     * @var ConsultationArchiveService
+     * @var $consultationArchiveAtlasService
      */
-    private $consultationArchiveService;
+    private $consultationArchiveAtlasService;
+
     /**
      * @var ContainerInterface
      */
     private $container;
 
-
     /**
      * ConsultationArchiveCommand constructor.
      */
-    public function __construct (ConsultationArchiveService $consultationArchiveService, ContainerInterface $container)
+    public function __construct (ConsultationArchiveAtlasService $consultationArchiveAtlasService, ContainerInterface $container)
     {
-        $this->consultationArchiveService = $consultationArchiveService;
+        $this->consultationArchiveAtlasService = $consultationArchiveAtlasService;
         $this->container = $container;
         parent::__construct ();
     }
@@ -42,7 +41,7 @@ class ConsultationArchiveAtlasCommand extends ContainerAwareCommand
     {
         $pwd            = $this->container->get("kernel")->getRootDir();
         $pathCsvData    = $pwd . '/../src/AppBundle/DataFixtures/data.csv';
-        $this->consultationArchiveService->populate ($pathCsvData);
+        $this->consultationArchiveAtlasService->populateConsultationArchiveAtlas ($pathCsvData);
         $output->writeln('Command result.');
     }
 }

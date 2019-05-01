@@ -6,12 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * ConsulationArchiveAtlas
+ * ConsultationArchiveAtlas
  *
- * @ORM\Table()
+ * @ORM\Table(name="consultation_archive_atlas")
  * @ORM\Entity()
  */
-class ConsulationArchiveAtlas
+class ConsultationArchiveAtlas
 {
     /**
      * @var int
@@ -32,7 +32,7 @@ class ConsulationArchiveAtlas
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $nomFichier;
 
@@ -64,42 +64,6 @@ class ConsulationArchiveAtlas
      * @ORM\Column(type="datetime")
      */
     private $dateEnvoi;
-
-    /**
-     * @return int
-     */
-    public function getNombreBloc ()
-    {
-        return $this->nombreBloc;
-    }
-
-    /**
-     * @param int $nombreBloc
-     * @return ConsulationArchiveAtlas
-     */
-    public function setNombreBloc ( $nombreBloc )
-    {
-        $this->nombreBloc = $nombreBloc;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getReferenceConsultation ()
-    {
-        return $this->referenceConsultation;
-    }
-
-    /**
-     * @param int $referenceConsultation
-     * @return ConsulationArchiveAtlas
-     */
-    public function setReferenceConsultation ( $referenceConsultation )
-    {
-        $this->referenceConsultation = $referenceConsultation;
-        return $this;
-    }
 
     /**
      * @return int
@@ -166,6 +130,38 @@ class ConsulationArchiveAtlas
     }
 
     /**
+     * @return int
+     */
+    public function getNombreBloc ()
+    {
+        return $this->nombreBloc;
+    }
+
+    /**
+     * @param int $nombreBloc
+     */
+    public function setNombreBloc ( $nombreBloc )
+    {
+        $this->nombreBloc = $nombreBloc;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReferenceConsultation ()
+    {
+        return $this->referenceConsultation;
+    }
+
+    /**
+     * @param int $referenceConsultation
+     */
+    public function setReferenceConsultation ( $referenceConsultation )
+    {
+        $this->referenceConsultation = $referenceConsultation;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getDateEnvoi ()
@@ -180,6 +176,8 @@ class ConsulationArchiveAtlas
     {
         $this->dateEnvoi = $dateEnvoi;
     }
+
+
 
 }
 

@@ -2,16 +2,14 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ConsulationArchiveAtlas;
+use AppBundle\Entity\ConsultationArchiveAtlas;
 use AppBundle\Entity\ConsulationArchiveBloc;
 use AppBundle\Entity\Consultation;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use AppBundle\Entity\ConsultationArchive;
 use Psr\Log\LoggerInterface;
 
@@ -19,19 +17,22 @@ class ConsultationArchiveService{
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
     /**
      * @var ValidatorInterface
      */
-    private $validator;
+    protected $validator;
     /**
      * @var ObjectManager
      */
-    private $em;
+    protected $em;
     /**
      * @var ContainerInterface
      */
-    private $container;
+    protected $container;
+
+    const A_ARCHIVER = 5;
+    const ARCHIVE = 6;
 
     /**
      * ConsultationArchiveService constructor.
@@ -40,7 +41,6 @@ class ConsultationArchiveService{
         ValidatorInterface $validator,
         ObjectManager $em,
         ContainerInterface $container
-
     )
     {
         $this->logger = $container->get('monolog.logger.consultation_archive');
@@ -49,162 +49,117 @@ class ConsultationArchiveService{
         $this->container = $container;
     }
 
-    public function populateConsultationArchiveAtlas($pathCsvData){
-        $this->logger->info('Début');
-        if (($handle = fopen($pathCsvData, "r")) !== false) {
-            $row = 0;
-            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                $row ++;
-                if (count ( $data ) != 6) {
-                    continue;
-                }
-                if ($data[0] === 'docId') {
-                    continue;
-                }
-                if (isset ( $data[0] ) and empty( $data[0] )) {
-                    continue;
-                }
-                $docId                    = (int)$data[0];
-                $nomFichier               = $data[1];
-                $numeroBloc               = (int)$data[2];
-                $nombreBloc               = (int)$data[3];
-                $dateEnvoi                = $this->frenchToDateTime ( $data[4] );
-                $consultationReference    = $data[5];
+    /**
+     * @return bool
+     */
+    public function populate()
+    {
+        $this->logger->info ( 'Début' );
 
-                $consultationArchiveAtlas = new ConsulationArchiveAtlas();
-                $consultationArchiveAtlas->setDocId ( $docId );
-                $consultationArchiveAtlas->setNomFichier ( $nomFichier );
-                $consultationArchiveAtlas->setNumeroBloc ( $numeroBloc );
-                $consultationArchiveAtlas->setNombreBloc ( $nombreBloc );
-                $consultationArchiveAtlas->setReferenceConsultation ( $consultationReference );
-                $consultationArchiveAtlas->setDateEnvoi ( $dateEnvoi );
-                $this->em->persist ($consultationArchiveAtlas);
+        $consultations = $this->em->getRepository ( Consultation::class )
+            ->findBy ( [
+                'etatConsultation' => self::ARCHIVE
+
+            ] );
+
+        foreach ( $consultations as $consultation ) {
+            /* @var Consultation $consultation */
+            $consultationsArchiveAtlas = $this->em->getRepository (ConsultationArchiveAtlas::class)
+                ->findBy (['referenceConsultation' => $consultation->getReference ()]);
+
+            if (empty($consultationsArchiveAtlas) || false === $this->archiveComplete($consultationsArchiveAtlas)){
+                // modication  status consultation en A_ARCHIVER
+                $consultation->setEtatConsultation (self::A_ARCHIVER);
+                // A FINIR
+            } else {
+                // mise à jour Consultation
+                // sauvegarde ConsultationArchive
+                // statut ARCHIVE = true
+                $this->saveConsultationArchive ($consultationsArchiveAtlas,  $consultation,true);
             }
-            $this->em->flush();
+
         }
+        $this->em->flush();
+        return true;
     }
 
     /**
-     * alimente les tables consultation_archive et consultation_archive_bloc
-     * @param String $pathCsvData
-     * format csv docId,localPath,numeroBloc,nombreBloc,dateEnvoi,consultation
+     * @param Consultation $consultation
+     * @return bool
      */
-    public function populate($pathCsvData){
-        $this->logger->info('Début');
-        $exclude = [];
-        $excludeBloc = [];
-        if (($handle = fopen($pathCsvData, "r")) !== false) {
-            $row = 0;
-            while (($data = fgetcsv($handle, 1000, ",")) !== false) {
-                $row++;
-                if (count($data) != 6){
-                    continue;
-                }
-                if ($data[0] === 'docId'){
-                    continue;
-                }
-                if (isset ($data[0]) and empty($data[0])) {
-                    continue;
-                }
-                $docId                  = (int) $data[0];
-                $localPath              = $data[1];
-                $numeroBloc             = (int)$data[2];
-                $nombreBloc             = (int)$data[3];
-                $dateEnvoi              = $this->frenchToDateTime ($data[4]);
-                $consultationReference  = $data[5];
+    public function archiveComplete(array $consultationsArchiveAtlas){
+        $blocs          = [];
+        $suiteBlocs     = [];
+        $nombreBloc     = 0;
 
+        /* @var ConsultationArchiveAtlas $consultationArchiveAtlas */
+        foreach($consultationsArchiveAtlas as $consultationArchiveAtlas){
+            $nombreBloc = $consultationArchiveAtlas->getNombreBloc ();
+            $blocs[] = $consultationArchiveAtlas->getNumeroBloc ();
+        }
+        // compare
+        for ($i = 1; $i <= $nombreBloc; $i++){
+            $suiteBlocs[] = $i;
+        }
+        sort($blocs);
+        $res = $suiteBlocs === $blocs;
+        return $res;
+    }
 
-                $criteria = ['reference'=> $consultationReference];
-                $consultation = $this->em->getRepository (Consultation::class)->findOneBy ($criteria);
-                /* @var Consultation $consultation */
-                if (empty($consultation)){
-                    $errorsString = sprintf("La consultation %s n'existe pas", $consultationReference);
-                    $this->logger->error($errorsString);
+    /**
+     * @param array $consultationsArchiveAtlas
+     * @param Consultation $consultation
+     * @param bool $archive
+     */
+    public function saveConsultationArchive(array $consultationsArchiveAtlas, Consultation $consultation, $archive = false){
+        $exclude     = [];
+
+        /* @var ConsultationArchiveAtlas $consultationArchiveAtlas */
+        foreach($consultationsArchiveAtlas as $consultationArchiveAtlas){
+            $excludeBloc = [];
+            try{
+
+                $consultationArchive = $this->em->getRepository (ConsultationArchive::class)
+                    ->findOneBy(['consultation' => $consultation]);
+
+                if (empty($consultationArchive)){
+                    if (!in_array($consultation->getId(), $exclude)){
+                        $consultationArchiveTmp = $this->persistConsultationArchive (
+                            $consultationArchiveAtlas,
+                            $consultation,
+                            $archive
+                        );
+                        $exclude[] = $consultationArchiveTmp->getConsultation()->getId() ;
+                        $info = sprintf("La ConsultationArchive pour la consultation %s est créée",
+                            $consultation->getReference ());
+                        $this->logger->info($info);
+                        $excludeBloc = [];
+                    }
                 } else {
-                    try{
-                        $errorsString = sprintf("La consultation %s existe", $consultationReference);
-                        $this->logger->info($errorsString);
-                        $consultationArchive = $this->em->getRepository (ConsultationArchive::class)
-                            ->findOneBy(['consultation' => $consultation]);
+                    $consultationArchiveTmp = $consultationArchive;
+                }
 
-                        if (empty($consultationArchive)){
-                            if (!in_array($consultation->getId(), $exclude)){
-                                $consultationArchiveTmp = $this->saveConsultationArchive (
-                                    $localPath,
-                                    $nombreBloc,
-                                    $dateEnvoi,
-                                    $row,
-                                    $consultation
-                                );
-                                $exclude[] = $consultationArchiveTmp->getConsultation () -> getId() ;
-                                $info = sprintf("La ConsultationArchive pour la consultation %s est créée",
-                                    $consultationReference);
-                                $this->logger->info($info);
-                                $excludeBloc = [];
-                            }
-                        } else {
-                            $consultationArchiveTmp = $consultationArchive;
-                        }
+                $consultationArchiveBloc = $this->em->getRepository (ConsulationArchiveBloc::class)
+                    ->findOneBy (['docId' => $consultationArchiveAtlas->getDocId () ]);
 
-                        $consultationArchiveBloc = $this->em->getRepository (ConsulationArchiveBloc::class)
-                            ->findOneBy (['docId' => $docId ]);
+                if (empty($consultationArchiveBloc)) {
+                    if (!in_array($consultationArchiveAtlas->getDocId (), $excludeBloc)){
+                        $consultationArchiveBloc = $this->persistConsultationArchiveBloc (
+                            $consultationArchiveAtlas,
+                            $consultationArchiveTmp,
+                            $archive
+                        );
 
-                        if (empty($consultationArchiveBloc)) {
-                            if (!in_array($docId, $excludeBloc)){
-                                $consultationArchiveBloc = $this->saveConsultationArchiveBloc (
-                                    $docId,
-                                    $numeroBloc,
-                                    $dateEnvoi,
-                                    $row,
-                                    $consultationArchiveTmp
-                                );
-                                $info = sprintf("La ConsultationArchiveBloc pour la consultation %s est créée",
-                                    $consultationReference);
-                                $this->logger->info($info);
-                                $excludeBloc[] = $consultationArchiveBloc->getDocId ();
-                            }
-
-                        }
-
-
-
-                    } catch (Exception $e){
-                        $this->logger->error($e->getMessage ());
+                        $info = sprintf("La ConsultationArchiveBloc pour la consultation %s est créée",
+                            $consultation->getReference ());
+                        $this->logger->info($info);
+                        $excludeBloc[] = $consultationArchiveBloc->getDocId ();
                     }
                 }
+            } catch (Exception $e){
+                $this->logger->error($e->getMessage ());
             }
-            $this->em->flush();
-            fclose($handle);
         }
-    }
-
-    /**
-     * @param $idDoc
-     * @param $numeroBloc
-     * @param $row
-     * @param ConsultationArchive $consultationArchive
-     * @return ConsulationArchiveBloc
-     */
-    public function saveConsultationArchiveBloc(
-        $idDoc,
-        $numeroBloc,
-        $dateEnvoi,
-        $row,
-        ConsultationArchive $consultationArchive
-    ){
-        $consultationArchiveBloc = new ConsulationArchiveBloc();
-        $consultationArchiveBloc->setDocId ($idDoc);
-        $consultationArchiveBloc->setNumeroBloc ($numeroBloc);
-        $consultationArchiveBloc->setDateEnvoi ($dateEnvoi);
-        $consultationArchiveBloc->setEnvoye(true);
-        $consultationArchiveBloc->setConsultationArchive ($consultationArchive);
-        $errors                 = $this->validator->validate($consultationArchiveBloc);
-        if (count($errors) > 0) {
-            throw new Exception("fichier ligne : " . $row . ' => ' . (string) $errors);
-        }
-        $this->em->persist($consultationArchiveBloc);
-
-        return $consultationArchiveBloc;
     }
 
     /**
@@ -215,27 +170,53 @@ class ConsultationArchiveService{
      * @param int $row
      * @return ConsultationArchive
      */
-    public function saveConsultationArchive(
-        $localPath,
-        $nombreBloc,
-        $dateEnvoi,
-        $row,
-        Consultation $consultation
+    public function persistConsultationArchive(
+        ConsultationArchiveAtlas $consulationArchiveAtlas,
+        Consultation $consultation,
+        $archive = false
     ){
         $consultationArchive    = new ConsultationArchive();
-
-        $consultationArchive->setDateEnvoi ($dateEnvoi);
-        $consultationArchive->setStatus('archive');
-        $consultationArchive->setNombreBloc ($nombreBloc);
-        $consultationArchive->setLocalPath ($localPath);
+        $consultationArchive->setArchive($archive);
+        $consultationArchive->setDateEnvoi ($consulationArchiveAtlas->getDateEnvoi ());
+        $consultationArchive->setNombreBloc ($consulationArchiveAtlas->getNombreBloc ());
+        $consultationArchive->setNomFichier ($consulationArchiveAtlas->getNomFichier ());
         $consultationArchive->setConsultation ($consultation);
         $errors                 = $this->validator->validate($consultationArchive);
-
         if (count($errors) > 0) {
-            throw new Exception("fichier ligne : " . $row . ' => ' . (string) $errors);
+            $msg = "consulationArchiveAtlas : " . $consulationArchiveAtlas->getId () . ' => ' . (string) $errors;
+            throw new Exception($msg);
         }
         $this->em->persist($consultationArchive);
         return $consultationArchive;
+    }
+
+    /**
+     * @param $idDoc
+     * @param $numeroBloc
+     * @param $row
+     * @param ConsultationArchive $consultationArchive
+     * @return ConsulationArchiveBloc
+     */
+    public function persistConsultationArchiveBloc(
+        ConsultationArchiveAtlas $consulationArchiveAtlas,
+        ConsultationArchive $consultationArchive,
+        $archive = false
+    ){
+        $consultationArchiveBloc = new ConsulationArchiveBloc();
+        $consultationArchiveBloc->setDocId ($consulationArchiveAtlas->getDocId ());
+        $consultationArchiveBloc->setNumeroBloc ($consulationArchiveAtlas->getNumeroBloc ());
+        $consultationArchiveBloc->setDateEnvoi ($consulationArchiveAtlas->getDateEnvoi ());
+        $consultationArchiveBloc->setArchive($archive);
+        $consultationArchiveBloc->setConsultationArchive ($consultationArchive);
+        $errors                 = $this->validator->validate($consultationArchiveBloc);
+        if (count($errors) > 0) {
+            $msg = "consulationArchiveAtlas : " . $consulationArchiveAtlas->getId () . ' => ' . (string) $errors;
+            throw new Exception( $msg );
+        }
+
+        $this->em->persist($consultationArchiveBloc);
+
+        return $consultationArchiveBloc;
     }
 
     /**
@@ -248,10 +229,7 @@ class ConsultationArchiveService{
             $date = new DateTime($french_date_string);
             $date->format('Y-m-d H:i');
             return $date;
-        } catch(\Exception $e){
-
-        }
+        } catch(\Exception $e){}
         return $frenchdate;
     }
 }
-

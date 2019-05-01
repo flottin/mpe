@@ -27,14 +27,14 @@ class ConsultationArchive
      *
      * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $localPath;
+    private $nomFichier;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="boolean", options={"default":true})
      */
-    private $status;
+    private $archive;
 
     /**
      * @var int
@@ -64,54 +64,6 @@ class ConsultationArchive
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set localPath
-     *
-     * @param string $localPath
-     *
-     * @return ConsultationArchive
-     */
-    public function setLocalPath($localPath)
-    {
-        $this->localPath = $localPath;
-
-        return $this;
-    }
-
-    /**
-     * Get localPath
-     *
-     * @return string
-     */
-    public function getLocalPath()
-    {
-        return $this->localPath;
-    }
-
-    /**
-     * Set status
-     *
-     * @param string $status
-     *
-     * @return ConsultationArchive
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * Get status
-     *
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->status;
     }
 
     /**
@@ -163,6 +115,38 @@ class ConsultationArchive
     public function setNombreBloc ( $nombreBloc )
     {
         $this->nombreBloc = $nombreBloc;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNomFichier ()
+    {
+        return $this->nomFichier;
+    }
+
+    /**
+     * @param string $nomFichier
+     */
+    public function setNomFichier ( $nomFichier )
+    {
+        $this->nomFichier = $nomFichier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getArchive ()
+    {
+        return $this->archive;
+    }
+
+    /**
+     * @param string $archive
+     */
+    public function setArchive ( $archive )
+    {
+        $this->archive = $archive;
     }
 }
 
