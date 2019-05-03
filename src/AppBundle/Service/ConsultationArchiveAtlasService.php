@@ -11,7 +11,8 @@ class ConsultationArchiveAtlasService extends ConsultationArchiveService
      * alimente les tables consultation_archive et consultation_archive_bloc
      * à lancer une fois
      * @param String $pathCsvData
-     * format csv docId,localPath,numeroBloc,nombreBloc,dateEnvoi,consultation
+     * format csv docId,nombreBloc,compId,contRep,dateEnvoi
+     *
      */
     public function populateConsultationArchiveAtlas($pathCsvData){
         $this->logger->info('Début');
@@ -19,7 +20,7 @@ class ConsultationArchiveAtlasService extends ConsultationArchiveService
             $row = 0;
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 $row ++;
-                if (count ( $data ) != 6) {
+                if (count ( $data ) != 5) {
                     continue;
                 }
                 if ($data[0] === 'docId') {
@@ -28,19 +29,17 @@ class ConsultationArchiveAtlasService extends ConsultationArchiveService
                 if (isset ( $data[0] ) and empty( $data[0] )) {
                     continue;
                 }
-                $docId                    = (int)$data[0];
-                $nomFichier               = $data[1];
-                $numeroBloc               = (int)$data[2];
-                $nombreBloc               = (int)$data[3];
+                $docId                    = $data[0];
+                $nombreBloc               = $data[1];
+                $compId                   = $data[2];
+                $contRep                  = $data[3];
                 $dateEnvoi                = $this->frenchToDateTime ( $data[4] );
-                $consultationReference    = $data[5];
 
                 $consultationArchiveAtlas = new ConsultationArchiveAtlas();
-                $consultationArchiveAtlas->setDocId ( $docId );
-                $consultationArchiveAtlas->setNomFichier ( $nomFichier );
-                $consultationArchiveAtlas->setNumeroBloc ( $numeroBloc );
+                $consultationArchiveAtlas->setDocId ($docId);
+                $consultationArchiveAtlas->setCompId ($compId);
+                $consultationArchiveAtlas->setContRep ($contRep);
                 $consultationArchiveAtlas->setNombreBloc ( $nombreBloc );
-                $consultationArchiveAtlas->setReferenceConsultation ( $consultationReference );
                 $consultationArchiveAtlas->setDateEnvoi ( $dateEnvoi );
                 $errors                 = $this->validator->validate($consultationArchiveAtlas);
                 if (count($errors) > 0) {

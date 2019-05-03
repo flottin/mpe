@@ -25,24 +25,9 @@ class ConsultationArchiveAtlas
     /**
      * @var int
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $docId;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
-     */
-    private $nomFichier;
-
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     */
-    private $numeroBloc;
 
     /**
      * @var int
@@ -54,9 +39,17 @@ class ConsultationArchiveAtlas
     /**
      * @var int
      *
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="integer")
      */
-    private $referenceConsultation;
+    private $compId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="string")
+     */
+    private $contRep;
+
 
     /**
      * @var \DateTime
@@ -98,38 +91,6 @@ class ConsultationArchiveAtlas
     }
 
     /**
-     * @return string
-     */
-    public function getNomFichier ()
-    {
-        return $this->nomFichier;
-    }
-
-    /**
-     * @param string $nomFichier
-     */
-    public function setNomFichier ( $nomFichier )
-    {
-        $this->nomFichier = $nomFichier;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNumeroBloc ()
-    {
-        return $this->numeroBloc;
-    }
-
-    /**
-     * @param int $numeroBloc
-     */
-    public function setNumeroBloc ( $numeroBloc )
-    {
-        $this->numeroBloc = $numeroBloc;
-    }
-
-    /**
      * @return int
      */
     public function getNombreBloc ()
@@ -148,17 +109,33 @@ class ConsultationArchiveAtlas
     /**
      * @return int
      */
-    public function getReferenceConsultation ()
+    public function getCompId ()
     {
-        return $this->referenceConsultation;
+        return $this->compId;
     }
 
     /**
-     * @param int $referenceConsultation
+     * @param int $compId
      */
-    public function setReferenceConsultation ( $referenceConsultation )
+    public function setCompId ( $compId )
     {
-        $this->referenceConsultation = $referenceConsultation;
+        $this->compId = $compId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getContRep ()
+    {
+        return $this->contRep;
+    }
+
+    /**
+     * @param int $contRep
+     */
+    public function setContRep ( $contRep )
+    {
+        $this->contRep = $contRep;
     }
 
     /**
@@ -176,6 +153,8 @@ class ConsultationArchiveAtlas
     {
         $this->dateEnvoi = $dateEnvoi;
     }
+
+
 
 
 

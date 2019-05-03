@@ -30,11 +30,10 @@ class ConsultationArchive
     private $nomFichier;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="boolean", options={"default":true})
+     * @ORM\ManyToOne(targetEntity="EtatConsultation")
+     * @ORM\JoinColumn(name="etat_consultation_id", referencedColumnName="id")
      */
-    private $archive;
+    private $etatConsultation;
 
     /**
      * @var int
@@ -51,70 +50,24 @@ class ConsultationArchive
 
     /**
      * @ORM\ManyToOne(targetEntity="Consultation")
-     * @ORM\JoinColumn(name="consultation_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="reference", referencedColumnName="reference")
      */
     private $consultation;
 
-
     /**
-     * Get id
-     *
      * @return int
      */
-    public function getId()
+    public function getId ()
     {
         return $this->id;
     }
 
     /**
-     * @param $dateEnvoi
-     * @return $this
+     * @param int $id
      */
-    public function setDateEnvoi($dateEnvoi)
+    public function setId ( $id )
     {
-        $this->dateEnvoi = $dateEnvoi;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDateEnvoi()
-    {
-        return $this->dateEnvoi;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getConsultation ()
-    {
-        return $this->consultation;
-    }
-
-    /**
-     * @param mixed $consultation
-     */
-    public function setConsultation ( $consultation )
-    {
-        $this->consultation = $consultation;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNombreBloc ()
-    {
-        return $this->nombreBloc;
-    }
-
-    /**
-     * @param int $nombreBloc
-     */
-    public function setNombreBloc ( $nombreBloc )
-    {
-        $this->nombreBloc = $nombreBloc;
+        $this->id = $id;
     }
 
     /**
@@ -134,19 +87,70 @@ class ConsultationArchive
     }
 
     /**
-     * @return string
+     * @return mixed
      */
-    public function getArchive ()
+    public function getEtatConsultation ()
     {
-        return $this->archive;
+        return $this->etatConsultation;
     }
 
     /**
-     * @param string $archive
+     * @param mixed $etatConsultation
      */
-    public function setArchive ( $archive )
+    public function setEtatConsultation ( $etatConsultation )
     {
-        $this->archive = $archive;
+        $this->etatConsultation = $etatConsultation;
     }
+
+    /**
+     * @return int
+     */
+    public function getNombreBloc ()
+    {
+        return $this->nombreBloc;
+    }
+
+    /**
+     * @param int $nombreBloc
+     */
+    public function setNombreBloc ( $nombreBloc )
+    {
+        $this->nombreBloc = $nombreBloc;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDateEnvoi ()
+    {
+        return $this->dateEnvoi;
+    }
+
+    /**
+     * @param mixed $dateEnvoi
+     */
+    public function setDateEnvoi ( $dateEnvoi )
+    {
+        $this->dateEnvoi = $dateEnvoi;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConsultation ()
+    {
+        return $this->consultation;
+    }
+
+    /**
+     * @param mixed $consultation
+     */
+    public function setConsultation ( $consultation )
+    {
+        $this->consultation = $consultation;
+    }
+
+
+
 }
 

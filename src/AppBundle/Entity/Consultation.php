@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Column;
 
 
 /**
@@ -13,65 +15,63 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Consultation
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+
 
     /**
-     * @var string
+     * @Id
+     * @Column(type="string")
+     */
+    private $organisme;
+
+    /**
+     * @Id
      *
      * @ORM\Column(type="string", length=255)
      */
     private $reference;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="EtatConsultation",cascade={"persist"})
+     * @ORM\JoinColumn(name="id_etat_consultation", referencedColumnName="id")
      */
+
+
     private $etatConsultation;
 
     /**
-     * Get id
-     *
-     * @return int
+     * @return mixed
      */
-    public function getId()
+    public function getOrganisme ()
     {
-        return $this->id;
+        return $this->organisme;
     }
 
     /**
-     * Set reference
-     *
-     * @param string $reference
-     *
-     * @return Consultation
+     * @param mixed $organisme
      */
-    public function setReference($reference)
+    public function setOrganisme ( $organisme )
     {
-        $this->reference = $reference;
-
-        return $this;
+        $this->organisme = $organisme;
     }
 
     /**
-     * Get reference
-     *
-     * @return string
+     * @return mixed
      */
-    public function getReference()
+    public function getReference ()
     {
         return $this->reference;
     }
 
     /**
-     * @return string
+     * @param mixed $reference
+     */
+    public function setReference ( $reference )
+    {
+        $this->reference = $reference;
+    }
+
+    /**
+     * @return mixed
      */
     public function getEtatConsultation ()
     {
@@ -79,11 +79,17 @@ class Consultation
     }
 
     /**
-     * @param string $etatConsultation
+     * @param mixed $etatConsultation
      */
     public function setEtatConsultation ( $etatConsultation )
     {
         $this->etatConsultation = $etatConsultation;
     }
+
+
+
+
+
+
 }
 
