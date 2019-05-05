@@ -36,6 +36,12 @@ class ConsultationArchiveAtlasService extends ConsultationArchiveService
                 $dateEnvoi                = $this->frenchToDateTime ( $data[4] );
 
                 $consultationArchiveAtlas = new ConsultationArchiveAtlas();
+
+
+                $docid = explode('/', $docId);
+
+
+
                 $consultationArchiveAtlas->setDocId ($docId);
                 $consultationArchiveAtlas->setCompId ($compId);
                 $consultationArchiveAtlas->setContRep ($contRep);

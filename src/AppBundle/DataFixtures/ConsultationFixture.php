@@ -52,7 +52,7 @@ class ConsultationFixture extends Fixture
 
         for($i = 0; $i <= 10; $i++){
             $consultation = new Consultation();
-            $consultation->setReference ('REFERENCE_' . $i);
+            $consultation->setReference ('000000' . $i);
             $consultation->setEtatConsultation ($etatConsultationAArchiver);
             $consultation->setOrganisme ('a4n');
             $em->persist($consultation);
@@ -60,7 +60,7 @@ class ConsultationFixture extends Fixture
 
         for($i = 11; $i <= 20; $i++){
             $consultation = new Consultation();
-            $consultation->setReference ('REFERENCE_' . $i);
+            $consultation->setReference ('000000' . $i);
             $consultation->setEtatConsultation ($etatConsultationArchive);
             $consultation->setOrganisme ('a4n');
             $em->persist($consultation);
@@ -68,7 +68,7 @@ class ConsultationFixture extends Fixture
 
         for($i = 21; $i <= 30; $i++){
             $consultation = new Consultation();
-            $consultation->setReference ('REFERENCE_' . $i);
+            $consultation->setReference ('000000' . $i);
             $consultation->setOrganisme ('a4n');
             $consultation->setEtatConsultation ($etatConsultationInit);
             $em->persist($consultation);

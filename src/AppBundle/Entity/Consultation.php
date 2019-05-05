@@ -15,8 +15,6 @@ use Doctrine\ORM\Mapping\Column;
  */
 class Consultation
 {
-
-
     /**
      * @Id
      * @Column(type="string")
@@ -34,8 +32,6 @@ class Consultation
      * @ORM\ManyToOne(targetEntity="EtatConsultation",cascade={"persist"})
      * @ORM\JoinColumn(name="id_etat_consultation", referencedColumnName="id")
      */
-
-
     private $etatConsultation;
 
     /**
@@ -85,11 +81,5 @@ class Consultation
     {
         $this->etatConsultation = $etatConsultation;
     }
-
-
-
-
-
-
 }
 
