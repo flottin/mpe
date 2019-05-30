@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\ConsultationArchiveAtlas;
 use AppBundle\Entity\ConsulationArchiveBloc;
 use AppBundle\Entity\Consultation;
+use AppBundle\Entity\EtatConsultation;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -62,14 +63,17 @@ class ConsultationArchiveService{
 
             ] );
 
+        $etatConsultationAArchiver = $this->em->getRepository(EtatConsultation::class)
+            ->find(self::A_ARCHIVER);
+
         foreach ( $consultations as $consultation ) {
             /* @var Consultation $consultation */
             $consultationsArchiveAtlas = $this->em->getRepository (ConsultationArchiveAtlas::class)
-                ->findBy (['referenceConsultation' => $consultation->getReference ()]);
+                ->findBy (['compId' => $consultation->getReference ()]);
 
             if (empty($consultationsArchiveAtlas) || false === $this->archiveComplete($consultationsArchiveAtlas)){
-                // modication  status consultation en A_ARCHIVER
-                $consultation->setEtatConsultation (self::A_ARCHIVER);
+                // modification status consultation en A_ARCHIVER
+                $consultation->setEtatConsultation ($etatConsultationAArchiver);
                 // A FINIR
             } else {
                 // mise à jour Consultation
@@ -120,7 +124,7 @@ class ConsultationArchiveService{
             try{
 
                 $consultationArchive = $this->em->getRepository (ConsultationArchive::class)
-                    ->findOneBy(['consultation' => $consultation]);
+                    ->findOneBy(['consultationReference' => $consultation->getReference()]);
 
                 if (empty($consultationArchive)){
                     if (!in_array($consultation->getId(), $exclude)){
@@ -180,7 +184,7 @@ class ConsultationArchiveService{
         $consultationArchive->setDateEnvoi ($consulationArchiveAtlas->getDateEnvoi ());
         $consultationArchive->setNombreBloc ($consulationArchiveAtlas->getNombreBloc ());
         $consultationArchive->setNomFichier ($consulationArchiveAtlas->getNomFichier ());
-        $consultationArchive->setConsultation ($consultation);
+        $consultationArchive->setReferenceConsultation($consultation->getReference());
         $errors                 = $this->validator->validate($consultationArchive);
         if (count($errors) > 0) {
             $msg = "consulationArchiveAtlas : " . $consulationArchiveAtlas->getId () . ' => ' . (string) $errors;

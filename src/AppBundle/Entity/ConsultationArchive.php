@@ -49,10 +49,27 @@ class ConsultationArchive
     private $dateEnvoi;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Consultation")
-     * @ORM\JoinColumn(name="reference", referencedColumnName="reference")
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $consultation;
+    private $referenceConsultation;
+
+    /**
+     * @return string
+     */
+    public function getReferenceConsultation()
+    {
+        return $this->referenceConsultation;
+    }
+
+    /**
+     * @param string $referenceConsultation
+     */
+    public function setReferenceConsultation($referenceConsultation)
+    {
+        $this->referenceConsultation = $referenceConsultation;
+    }
 
     /**
      * @return int
@@ -134,21 +151,7 @@ class ConsultationArchive
         $this->dateEnvoi = $dateEnvoi;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getConsultation ()
-    {
-        return $this->consultation;
-    }
 
-    /**
-     * @param mixed $consultation
-     */
-    public function setConsultation ( $consultation )
-    {
-        $this->consultation = $consultation;
-    }
 
 
 

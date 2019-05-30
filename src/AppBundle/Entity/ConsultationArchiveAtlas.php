@@ -39,7 +39,7 @@ class ConsultationArchiveAtlas
     /**
      * @var int
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $compId;
 

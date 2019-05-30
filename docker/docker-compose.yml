@@ -7,7 +7,7 @@ services:
     volumes:
       - ../:/var/www/html
       - ./apache.conf:/etc/apache2/sites-enabled/000-default.conf
-      - ./xdebug/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+      - ./xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       #- ./.bashrc:/root/.bashrc
     links:
       - database
