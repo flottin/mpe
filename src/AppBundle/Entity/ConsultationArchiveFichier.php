@@ -20,10 +20,21 @@ class ConsultationArchiveFichier
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    /**
+
+     * @ORM\Column(type="integer")
+     */
+    private $consultationRef;
 
     /**
 
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
+     */
+    private $organisme;
+
+    /**
+
+     * @ORM\Column(type="string", length=255)
      */
     private $cheminFichier;
 
@@ -81,9 +92,49 @@ class ConsultationArchiveFichier
         $this->poids = $poids;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getOrganisme ()
+    {
+        return $this->organisme;
+    }
 
+    /**
+     * @param mixed $organisme
+     */
+    public function setOrganisme ( $organisme )
+    {
+        $this->organisme = $organisme;
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getConsultationRef ()
+    {
+        return $this->consultationRef;
+    }
 
+    /**
+     * @param mixed $consultationRef
+     */
+    public function setConsultationRef ( $consultationRef )
+    {
+        $this->consultationRef = $consultationRef;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString ()
+    {
+
+        return sprintf("%s => %s => %s", $this->getOrganisme (),
+            $this->getConsultationRef (),
+            $this->getCheminFichier ()
+        );
+    }
 
 
 }
