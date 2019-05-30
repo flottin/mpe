@@ -5,9 +5,9 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ConsultationArchiveFichier;
 use Doctrine\Common\Persistence\ObjectManager;
+use League\Flysystem\Filesystem;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Log\LoggerInterface;
 
@@ -31,6 +31,25 @@ class ConsultationArchiveFichierService{
 
     const A_ARCHIVER = 5;
     const ARCHIVE = 6;
+
+    /** @var Filesystem $filesystem */
+    private $filesystem;
+
+    /**
+     * @return mixed
+     */
+    public function getFilesystem ()
+    {
+        return $this->filesystem;
+    }
+
+    /**
+     * @param mixed $filesystem
+     */
+    public function setFilesystem (Filesystem $filesystem )
+    {
+        $this->filesystem = $filesystem;
+    }
 
 
     /**
@@ -58,29 +77,37 @@ class ConsultationArchiveFichierService{
     /**
      * @return bool
      */
-    public function populate()
+    public function populate(OutputInterface $output)
     {
-        $path = '/var/www/html/test';
+        $res = true;
+        if (empty($this->filesystem)){
+            throw new \Exception('error filesystem');
+        }
+        foreach($this->filesystem->listContents ('./', true) as $file){
+            $path = $file['path'];
+            if (substr($path, -4) === ".zip"){
+                $relativePathName = './'. $path;
+                $s = urlencode($relativePathName);
+                $s1 = str_replace('%2F', '/', $s);
+                preg_match ("#^\.\/([a-z]{1}[0-9]{1}[a-z]{1})\/(.*)_([0-9]+).zip$#", $s1, $matches);
 
-        $finder = new Finder();
-        $finder->files()->name('*.zip')->in ($path);
-        /** @var SplFileInfo $f */
-        foreach ($finder as $f)
-        {
-            $relativePathName = './'. $f->getRelativePathname ();
-            $s = urlencode($relativePathName);
-            $s1 = str_replace('%2F', '/', $s);
-            preg_match ("#^\.\/(a5H)\/(.*)_([0-9]+).zip$#", $s1, $matches);
+                if (!isset($matches{3})){
+                    //var_dump($matches, $s1);
+                    // log error
+                    $res = false;
+                    continue;
+                }
 
-            $consultationArchiveFichier = new ConsultationArchiveFichier();
-            $consultationArchiveFichier->setConsultationRef ($matches{3});
-            $consultationArchiveFichier->setOrganisme ($matches{1});
-            $consultationArchiveFichier->setCheminFichier ($s1);
-            $consultationArchiveFichier->setPoids((int)$f->getSize());
-            $this->em->persist ($consultationArchiveFichier);
-            echo "$consultationArchiveFichier\n";
+                $consultationArchiveFichier = new ConsultationArchiveFichier();
+                $consultationArchiveFichier->setConsultationRef ($matches{3});
+                $consultationArchiveFichier->setOrganisme ($matches{1});
+                $consultationArchiveFichier->setCheminFichier ($s1);
+                $consultationArchiveFichier->setPoids((int)$this->filesystem->getSize ($path));
+                $this->em->persist ($consultationArchiveFichier);
+                $output->writeln ("$consultationArchiveFichier");
+            }
         }
         $this->em->flush();
-        return true;
+        return $res;
     }
 }

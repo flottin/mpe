@@ -5,9 +5,10 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Service\ConsultationArchiveFichierService;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectManager;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Memory\MemoryAdapter;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -19,42 +20,50 @@ class ConsultationArchiveServiceTest extends TestCase
      * @param $expected
      * @throws \ReflectionException
      */
-    public function testPopulate()
+    public function testPopulate($filesystem, $expected)
     {
-
-        $adapter = new Local(
-            __DIR__.'/path/to/too',
-            LOCK_EX,
-            Local::SKIP_LINKS
-        );
-        $filesystem = new Filesystem($adapter);
-
+        $output = $this->getMockBuilder (OutputInterface::class)->getMock();
         /* @var \Symfony\Component\Validator\Validator\ValidatorInterface $validator */
         $validator = $this->getMockBuilder(ValidatorInterface::class)->getMock ();
 
         $em = $this->createMock (ObjectManager::class);
         $container = $this->createMock (ContainerInterface::class);
-        $consultationArchiveService = new ConsultationArchiveFichierService($validator, $em, $container);
 
+        $consultationArchiveFichierService = new ConsultationArchiveFichierService($validator, $em, $container);
 
+        $consultationArchiveFichierService->setFilesystem ($filesystem);
+        $actual = $consultationArchiveFichierService->populate ($output);
+        $this->assertEquals($expected, $actual);
 
-
-        $actual = $consultationArchiveService->frenchToDateTime ($date);
-        if (null === $date){
-            $dateClass = DateTime::class;
-            /* @var \PHPUnit\Framework\string $dateClass */
-            $this->assertInstanceOf($dateClass, $actual);
-        } else {
-            $this->assertEquals($expected, $actual);
-        }
     }
 
     public function dataProvider(){
-        yield ['2009/13/20', '2009/13/20'];
-        yield [null, true];
-        yield ['09/13/2018', '09/13/2018'];
-        yield ['12/10/2018', new DateTime('2018-10-12')];
-        yield ['12/10/20188', '12/10/20188'];
+        $adapter = new MemoryAdapter();
+
+        $filesystem = new Filesystem($adapter);
+        $filesystem->createDir ('./g7h');
+        $filesystem->write ('./g7h/test_467567856578.zip', str_repeat('0', 200));
+        $filesystem->write ('./g7h/test_467567856578.txt', str_repeat('0', 100));
+        $filesystem->write ('./g7h/test_111111111118.zip', str_repeat('0', 1000));
+        $filesystem->createDir ('./a4n');
+        $filesystem->write ('./a4n/test_467567856578.zip', str_repeat('0', 200));
+        $filesystem->write ('./a4n/test_467567856578.txt', str_repeat('0', 100));
+        $filesystem->write ('./a4n/test_111111111118.zip', str_repeat('0', 1000));
+        $filesystem->write ('./a4n/test_111111111119.zip', str_repeat('0', 10000));
+        $filesystem->write ('./a4n/accent , é ê ; /  \ _111111111119.zip', str_repeat('0', 10000));
+
+        yield [$filesystem, true];
+        unset($filesystem);
+
+        $adapter = new MemoryAdapter();
+        $filesystem = new Filesystem($adapter);
+        $filesystem->createDir ('./a4n');
+        $filesystem->write ('./a4n/accent , é ê ; /  \ _111111111119.zip', str_repeat('0', 10000));
+        $filesystem->write ('./test/a4n/accent , é ê ; /  \ _111111111120.zip', str_repeat('0', 10000));
+        $filesystem->write ('./a4n/accent , é ê ; /  \ _111111111121.zip', str_repeat('0', 10000));
+        yield [$filesystem, false];
+
+
 
     }
 }
