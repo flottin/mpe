@@ -33,7 +33,7 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
      */
     public function __construct (ConsultationArchiveSplitService $service,
                                  ContainerInterface $container,
-ObjectManager $em)
+                                 ObjectManager $em)
     {
         $this->service = $service;
         parent::__construct ();
