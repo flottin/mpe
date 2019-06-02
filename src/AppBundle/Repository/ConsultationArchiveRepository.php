@@ -10,4 +10,13 @@ namespace AppBundle\Repository;
  */
 class ConsultationArchiveRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findConsultationsArchive(){
+       $qb = $this->createQueryBuilder ('c');
+       $result = $qb->select ('c')
+           ->where ($qb->expr()->isNotNull('c.nomFichier'))
+       ->andWhere('c.etatConsultation = 5')
+       ;
+       return $result->getQuery ()->getResult ();
+
+    }
 }

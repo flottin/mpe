@@ -60,7 +60,8 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
         $this->service->setPath ( $path );
 
         $datas = $this->em->getRepository (ConsultationArchive::class)
-            ->findBy(['etatConsultation' => 5]);
+        ->findConsultationsArchive()
+        ;
         $this->service->populate ($datas);
 
 
