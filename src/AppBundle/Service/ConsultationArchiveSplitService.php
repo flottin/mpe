@@ -62,13 +62,10 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
                 $this->em->persist ( $consultationArchiveBloc );
 
             }
-            //$this->em->flush ();
+            $this->em->flush ();
         } else {
             throw new \Exception($absolutePath . " n'existe pas!");
-
         }
-
-
     }
 
     /**
