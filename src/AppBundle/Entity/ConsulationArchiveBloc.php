@@ -23,9 +23,8 @@ class ConsulationArchiveBloc
     private $id;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
+
+     * @ORM\Column(type="string")
      */
     private $docId;
 
@@ -130,17 +129,13 @@ class ConsulationArchiveBloc
     }
 
 
-    /**
-     * @return int
-     */
+
     public function getDocId ()
     {
         return $this->docId;
     }
 
-    /**
-     * @param int $docId
-     */
+
     public function setDocId ( $docId )
     {
         $this->docId = $docId;

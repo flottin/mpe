@@ -8,7 +8,9 @@ use AppBundle\Entity\Consultation;
 use AppBundle\Entity\EtatConsultation;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectManager;
+use League\Flysystem\Filesystem;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use AppBundle\Entity\ConsultationArchive;
@@ -32,6 +34,16 @@ class ConsultationArchiveService{
      */
     protected $container;
 
+    /** @var OutputInterface $output */
+    protected $output;
+
+
+
+    /** @var Filesystem */
+    protected $filesystem;
+
+
+
     const A_ARCHIVER = 5;
     const ARCHIVE = 6;
 
@@ -53,7 +65,7 @@ class ConsultationArchiveService{
     /**
      * @return bool
      */
-    public function populate()
+    public function populate(array $datas = null)
     {
         $this->logger->info ( 'Début' );
 
@@ -73,7 +85,7 @@ class ConsultationArchiveService{
 
             if (empty($consultationsArchiveAtlas) || false === $this->archiveComplete($consultationsArchiveAtlas)){
                 // modification status consultation en A_ARCHIVER
-                $consultation->setEtatConsultation ($etatConsultationAArchiver);
+                //$consultation->setEtatConsultation ($etatConsultationAArchiver);
                 // A FINIR
             } else {
                 // mise à jour Consultation
@@ -92,6 +104,7 @@ class ConsultationArchiveService{
      * @return bool
      */
     public function archiveComplete(array $consultationsArchiveAtlas){
+        return true;
         $blocs          = [];
         $suiteBlocs     = [];
         $nombreBloc     = 0;
@@ -99,7 +112,7 @@ class ConsultationArchiveService{
         /* @var ConsultationArchiveAtlas $consultationArchiveAtlas */
         foreach($consultationsArchiveAtlas as $consultationArchiveAtlas){
             $nombreBloc = $consultationArchiveAtlas->getNombreBloc ();
-            $blocs[] = $consultationArchiveAtlas->getNumeroBloc ();
+            $blocs[] = $consultationArchiveAtlas->getNombreBloc ();
         }
         // compare
         for ($i = 1; $i <= $nombreBloc; $i++){
@@ -124,16 +137,20 @@ class ConsultationArchiveService{
             try{
 
                 $consultationArchive = $this->em->getRepository (ConsultationArchive::class)
-                    ->findOneBy(['consultationReference' => $consultation->getReference()]);
+                    ->findOneBy(['referenceConsultation' => $consultation->getReference()]);
 
                 if (empty($consultationArchive)){
-                    if (!in_array($consultation->getId(), $exclude)){
+
+
+                    if (!in_array($consultation->getReference(), $exclude)){
                         $consultationArchiveTmp = $this->persistConsultationArchive (
                             $consultationArchiveAtlas,
                             $consultation,
                             $archive
                         );
-                        $exclude[] = $consultationArchiveTmp->getConsultation()->getId() ;
+                        $exclude[] = $consultationArchiveTmp->getReferenceConsultation ()
+                        //    ->getConsultation()->getReference()
+                        ;
                         $info = sprintf("La ConsultationArchive pour la consultation %s est créée",
                             $consultation->getReference ());
                         $this->logger->info($info);
@@ -180,10 +197,10 @@ class ConsultationArchiveService{
         $archive = false
     ){
         $consultationArchive    = new ConsultationArchive();
-        $consultationArchive->setArchive($archive);
+        //$consultationArchive->setEtatConsultation ('');
         $consultationArchive->setDateEnvoi ($consulationArchiveAtlas->getDateEnvoi ());
         $consultationArchive->setNombreBloc ($consulationArchiveAtlas->getNombreBloc ());
-        $consultationArchive->setNomFichier ($consulationArchiveAtlas->getNomFichier ());
+        $consultationArchive->setNomFichier (rand(1, 150));
         $consultationArchive->setReferenceConsultation($consultation->getReference());
         $errors                 = $this->validator->validate($consultationArchive);
         if (count($errors) > 0) {
@@ -191,6 +208,7 @@ class ConsultationArchiveService{
             throw new Exception($msg);
         }
         $this->em->persist($consultationArchive);
+
         return $consultationArchive;
     }
 
@@ -208,7 +226,7 @@ class ConsultationArchiveService{
     ){
         $consultationArchiveBloc = new ConsulationArchiveBloc();
         $consultationArchiveBloc->setDocId ($consulationArchiveAtlas->getDocId ());
-        $consultationArchiveBloc->setNumeroBloc ($consulationArchiveAtlas->getNumeroBloc ());
+        $consultationArchiveBloc->setNumeroBloc ($consulationArchiveAtlas->getNombreBloc ());
         $consultationArchiveBloc->setDateEnvoi ($consulationArchiveAtlas->getDateEnvoi ());
         $consultationArchiveBloc->setArchive($archive);
         $consultationArchiveBloc->setConsultationArchive ($consultationArchive);
@@ -235,5 +253,38 @@ class ConsultationArchiveService{
             return $date;
         } catch(\Exception $e){}
         return $frenchdate;
+    }
+
+
+    /**
+     * @return OutputInterface
+     */
+    public function getOutput ()
+    {
+        return $this->output;
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    public function setOutput ( $output )
+    {
+        $this->output = $output;
+    }
+
+    /**
+     * @return Filesystem
+     */
+    public function getFilesystem ()
+    {
+        return $this->filesystem;
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     */
+    public function setFilesystem ( $filesystem )
+    {
+        $this->filesystem = $filesystem;
     }
 }
