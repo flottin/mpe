@@ -36,6 +36,12 @@ class ConsulationArchiveBloc
     private $numeroBloc;
 
     /**
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $poidsBloc;
+
+    /**
      * @var \DateTime
      * @Assert\DateTime(message="Le format attendu est dateTime et non : '{{ value }}'.")
      * @ORM\Column(type="datetime")
@@ -155,6 +161,22 @@ class ConsulationArchiveBloc
     public function setConsultationArchive ( $consultationArchive )
     {
         $this->consultationArchive = $consultationArchive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPoidsBloc ()
+    {
+        return $this->poidsBloc;
+    }
+
+    /**
+     * @param mixed $poidsBloc
+     */
+    public function setPoidsBloc ( $poidsBloc )
+    {
+        $this->poidsBloc = $poidsBloc;
     }
 }
 
