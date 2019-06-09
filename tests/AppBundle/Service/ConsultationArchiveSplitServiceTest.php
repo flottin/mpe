@@ -7,12 +7,9 @@ use AppBundle\Entity\ConsultationArchive;
 use AppBundle\Service\ConsultationArchiveService;
 use AppBundle\Service\ConsultationArchiveSplitService;
 use Doctrine\Common\Persistence\ObjectManager;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Memory\MemoryAdapter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ConsultationArchiveSplitServiceTest extends TestCase
@@ -26,7 +23,6 @@ class ConsultationArchiveSplitServiceTest extends TestCase
      */
     public function testPopulate()
     {
-
         // scenario 1 : tout se passe bien
         // je fournis une liste de consultationArchive au statusFragmentation false
         $consultationsArchive = $this->getConsultationsArchive ();
@@ -35,12 +31,8 @@ class ConsultationArchiveSplitServiceTest extends TestCase
         $service = $this->getService ();
         $listActual  = $service->populate ( $consultationsArchive );
         $actual = count($listActual);
-
         $expected = 2;
-
         $this->assertSame ( $expected, $actual );
-
-
     }
 
     /**
@@ -72,7 +64,7 @@ class ConsultationArchiveSplitServiceTest extends TestCase
         $expected = "a4n_1234567.zip-000010";
         $this->assertSame($expected, $actual);
 
-        // le contenue du dernier fichier doit $etre correct
+        // le contenu du dernier fichier doit être correct
         $filesystem = $service->getFilesystem ();
         $actual = $filesystem->read($expected);
         $expected = "é";
@@ -93,16 +85,11 @@ class ConsultationArchiveSplitServiceTest extends TestCase
      * @throws \Exception
      */
     public function testExtractNumeroBloc($str, $expected){
-
-
         $service = $this->getService ();
-
         if (false === $expected) {
             $this->expectException(\Exception::class);
         }
-
         $actual = $service->extractNumeroBloc ($str);
-
         $this->assertEquals ($expected, $actual);
     }
 
@@ -118,12 +105,10 @@ class ConsultationArchiveSplitServiceTest extends TestCase
     public function getConsultationsArchive(){
         $consultationArchive = new ConsultationArchive();
         $consultationArchive->setNomFichier('a4n_1234567.zip');
-
         $consultationsArchive [] = $consultationArchive;
 
         $consultationArchive = new ConsultationArchive();
         $consultationArchive->setNomFichier('a4n_1234567.zip');
-
         $consultationsArchive [] = $consultationArchive;
         return $consultationsArchive;
     }

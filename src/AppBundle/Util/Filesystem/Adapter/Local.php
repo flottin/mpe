@@ -8,6 +8,7 @@ use Symfony\Component\Process\Process;
 
 class Local extends \League\Flysystem\Adapter\Local
 {
+    use AdapterTrait;
 
     /**
      * @inheritdoc
@@ -35,35 +36,6 @@ class Local extends \League\Flysystem\Adapter\Local
             throw new ProcessFailedException($process);
         }
 
-        return $this->splitted($pathOut, $filename);
-
+        return $this->splitted($filename, $pathOut);
     }
-
-    /**
-     * @param $path
-     * @param $filename
-     * @return array
-     */
-    public function splitted($path, $filename)
-    {
-        $files = [];
-        foreach ($this->listContents ($path) as $file){
-            $path = $file['path'];
-            if(strstr ($path.'-', $filename)){
-                $files [] = $file;
-            }
-        }
-
-        return $files;
-    }
-
-    public function remove($path){
-        $pattern = str_replace ('*', '(.*)', $path);
-        foreach ($this->listContents ('', true) as $file){
-            if (preg_match('#^'.$pattern.'$#', $file['path'], $matches)){
-                $this->delete($file['path']);
-            }
-        }
-    }
-
 }

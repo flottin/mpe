@@ -4,8 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ConsulationArchiveBloc;
 use AppBundle\Entity\ConsultationArchive;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 /**
  * Class ConsultationArchiveSplitService
@@ -31,6 +29,7 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
             } catch (\Exception $e){
                 // log
                 //var_dump($e);
+                $this->filesystem->remove ($consultationArchive->getNomFichier () . '*');
             }
         }
         return $res;
