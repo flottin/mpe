@@ -6,9 +6,10 @@ use AppBundle\Entity\ConsultationArchiveAtlas;
 use AppBundle\Entity\ConsulationArchiveBloc;
 use AppBundle\Entity\Consultation;
 use AppBundle\Entity\EtatConsultation;
+use AppBundle\Util\Filesystem\Filesystem;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectManager;
-use League\Flysystem\Filesystem;
+
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

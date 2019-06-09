@@ -1,46 +1,50 @@
 <?php
-namespace AppBundle\Util;
+namespace AppBundle\Util\Filesystem\Adapter;
 use League\Flysystem\Config;
-use League\Flysystem\Memory\MemoryAdapter;
 
-class MemoryAdapterExtra extends MemoryAdapter
+class MemoryAdapter extends \League\Flysystem\Memory\MemoryAdapter
 {
 
     /**
      * @inheritdoc
      */
-    public function split($pathfile, $chunk)
+    public function split($pathfile, $chunk, $pad_length = 6)
     {
         foreach ($this->listContents () as $file){
             $path = $file['path'];
+
             if ($path === $pathfile){
                 $s = $this->read($path);
                 $s = $s ['contents'];
                 $count = 0;
-                $content = '';
+
                 while (true){
-                    if (!isset($s[$count])){
+                    $ind = $count*$chunk;
+                    $content = substr($s, $ind , $chunk);
+                    $splittedFilename = $pathfile . '-' .
+                        str_pad ($count, 6, '0', STR_PAD_LEFT);
+
+                    if (!isset($s[$ind])){
                         break;
                     }
-                    $content .= $s{$count};
-                    $splittedFilename = $pathfile . '-' .
-                        str_pad ($count, 5, '0', STR_PAD_LEFT);
-
                     $config = new Config();
-                    if ($count % $chunk == 0){
+                    if ($ind % $chunk == 0) {
                         $this->write($splittedFilename, $content, $config);
-                        $content = '';
                     }
+
                     $count++;
                 }
-                $this->write($splittedFilename, $content, $config);
+
             }
         }
+        $files = [];
         foreach($this->listContents () as $file){
-            var_dump($file);
+            if (strstr($file['path'] , $pathfile . '-')) {
+                $files [] = $file;
+            }
         }
 
-        return true;
+        return $files;
     }
 
 }

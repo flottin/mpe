@@ -2,17 +2,19 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Entity\ConsultationArchive;
 use AppBundle\Service\ConsultationArchiveSplitService;
+
+use AppBundle\Util\Filesystem\Adapter\Local;
+use AppBundle\Util\Filesystem\Filesystem;
 use Doctrine\Common\Persistence\ObjectManager;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
+
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+
 
 class ConsultationArchiveSplitCommand extends ContainerAwareCommand
 {
@@ -28,6 +30,7 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
      */
     private $em;
 
+    use LockableTrait;
     /**
      * ConsultationArchiveCommand constructor.
      */
@@ -38,6 +41,7 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
         $this->service = $service;
         parent::__construct ();
         $this->em = $em;
+        $this->container = $container;
     }
 
     protected function configure()
@@ -45,29 +49,30 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
         $this
             ->setName('consultation:archive:split')
             ->setDescription('Split les fichiers et alimente la table consultation_archive_bloc')
+            ->addOption ('create', 'c', InputOption::VALUE_OPTIONAL, 'create');
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $time_start = microtime ( true );
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
 
-        $path       = '/var/www/html/FichiersArchives/';
-        $adapter    = new Local( $path );
-        $filesystem = new Filesystem( $adapter );
+            return 0;
+        }
+        $path = '/var/www/html/test/';
+        $adapter = new Local($path);
+        $filesystem = new Filesystem($adapter);
         $this->service->setOutput ( $output );
         $this->service->setFilesystem ( $filesystem );
-        $this->service->setPath ( $path );
 
-        $datas = $this->em->getRepository (ConsultationArchive::class)
-        ->findConsultationsArchive()
+        $datas = $this->em
+            ->getRepository (ConsultationArchive::class)
+            ->findConsultationsArchive()
         ;
+
         $this->service->populate ($datas);
 
-
-        $time_end       = microtime ( true );
-        $execution_time = ($time_end - $time_start);
-        $output->writeln ( 'Total Execution Time: ' . ceil ( $execution_time ) . 's' );
+        $this->release();
     }
-
 }

@@ -48,14 +48,7 @@ class ConsulationArchiveBloc
      */
     private $dateEnvoi;
 
-    /**
-     * @var boolean
-     * @Assert\Type("boolean")
-     * @var string
-     *
-     * @ORM\Column(type="boolean", options={"default":true})
-     */
-    private $archive;
+
 
 
     /**
@@ -177,6 +170,22 @@ class ConsulationArchiveBloc
     public function setPoidsBloc ( $poidsBloc )
     {
         $this->poidsBloc = $poidsBloc;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatusFragmentation ()
+    {
+        return $this->statusFragmentation;
+    }
+
+    /**
+     * @param mixed $statusFragmentation
+     */
+    public function setStatusFragmentation ( $statusFragmentation )
+    {
+        $this->statusFragmentation = $statusFragmentation;
     }
 }
 

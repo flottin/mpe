@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Util;
+namespace AppBundle\Util\Filesystem;
 use League\Flysystem\Util;
 
 /**
@@ -9,7 +9,7 @@ use League\Flysystem\Util;
  * Time: 21:52
  */
 
-class FilesystemExtra extends \League\Flysystem\Filesystem
+class Filesystem extends \League\Flysystem\Filesystem
 {
     /**
      * @inheritdoc
@@ -21,8 +21,7 @@ class FilesystemExtra extends \League\Flysystem\Filesystem
         $this->assertPresent ( $path );
         $this->assertAbsent ( $chunk );
 
-        return (bool)$this->getAdapter ()->split ( $path, $chunk );
-
+        return $this->getAdapter ()->split ( $path, $chunk );
     }
 
     /**
@@ -31,10 +30,7 @@ class FilesystemExtra extends \League\Flysystem\Filesystem
     public function remove ( $path )
     {
         $path    = Util::normalizePath ( $path );
-
         //$this->assertPresent ( $path );
-
-
         return (bool)$this->getAdapter ()->remove ( $path );
 
     }

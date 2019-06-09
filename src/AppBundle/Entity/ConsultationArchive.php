@@ -49,11 +49,15 @@ class ConsultationArchive
     private $dateEnvoi;
 
     /**
+     * @var boolean
+     * @Assert\Type("boolean")
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="boolean", options={"default":true})
      */
-    private $referenceConsultation;
+    private $statusFragmentation;
+
+
 
     /**
      * @return string
@@ -151,8 +155,21 @@ class ConsultationArchive
         $this->dateEnvoi = $dateEnvoi;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getStatusFragmentation ()
+    {
+        return $this->statusFragmentation;
+    }
 
-
+    /**
+     * @param mixed $statusFragmentation
+     */
+    public function setStatusFragmentation ( $statusFragmentation )
+    {
+        $this->statusFragmentation = $statusFragmentation;
+    }
 
 
 }
