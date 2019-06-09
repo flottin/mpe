@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\ConsultationArchive;
 use AppBundle\Service\ConsultationArchiveSplitService;
 
 use AppBundle\Util\Filesystem\Adapter\Local;
@@ -57,7 +58,6 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
     {
         if (!$this->lock()) {
             $output->writeln('The command is already running in another process.');
-
             return 0;
         }
         $path = '/var/www/html/test/';

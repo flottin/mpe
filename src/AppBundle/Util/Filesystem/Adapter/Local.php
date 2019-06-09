@@ -24,7 +24,6 @@ class Local extends \League\Flysystem\Adapter\Local
             $chunk,
             '-d',
             '-a'.$pad_left,
-            '--verbose',
             $absoluteFilenamePath,
             $pathOut .'/'.$filename."-"
         ];
