@@ -1,9 +1,9 @@
 <?php
 namespace Tests\AppBundle\Controller;
 
-use AppBundle\Util\Filesystem\Adapter\MemoryAdapter;
 use AppBundle\Util\Filesystem\Filesystem;
 use PHPUnit\Framework\TestCase;
+use Tests\AppBundle\Util\Filesystem\Adapter\MemoryAdapter;
 
 class AdapterTraitTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Util\Filesystem\Process;
+namespace Tests\AppBundle\Util\Filesystem\Process;
 
 use AppBundle\Util\Filesystem\Filesystem;
 use League\Flysystem\Config;

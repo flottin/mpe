@@ -1,7 +1,8 @@
 <?php
-namespace AppBundle\Util\Filesystem\Adapter;
+namespace Tests\AppBundle\Util\Filesystem\Adapter;
 
-use AppBundle\Util\Filesystem\Process\MemoryProcess;
+use AppBundle\Util\Filesystem\Adapter\AdapterTrait;
+use Tests\AppBundle\Util\Filesystem\Process\MemoryProcess;
 
 class MemoryAdapter extends \League\Flysystem\Memory\MemoryAdapter
 {
