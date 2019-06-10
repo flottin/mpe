@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Tests\AppBundle\Util\Filesystem\Adapter\MemoryAdapter;
 
 class ConsultationArchiveSplitServiceTest extends TestCase
 {
@@ -129,7 +130,7 @@ class ConsultationArchiveSplitServiceTest extends TestCase
         $service = new ConsultationArchiveSplitService($validator, $em, $container);
         $service->setPath($path);
 
-        $adapter = new \AppBundle\Util\Filesystem\Adapter\MemoryAdapter();
+        $adapter = new MemoryAdapter();
         $filesystem = new \AppBundle\Util\Filesystem\Filesystem($adapter);
         $file = 'a4n_1234567.zip';
         $content = '';
