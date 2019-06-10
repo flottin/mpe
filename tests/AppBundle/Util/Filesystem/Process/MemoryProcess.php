@@ -39,7 +39,6 @@ Class MemoryProcess
         if (strlen($s) % $chunk > 0){
             $count++;
         }
-        $res = [];
         for ($i = 0 ; $i < $count ; $i++){
             $splittedFilename = $absoluteFilenamePath . '-' .
                 str_pad (
@@ -50,12 +49,8 @@ Class MemoryProcess
                 );
             $ind = $i * $chunk;
             $content = substr($s, $ind , $chunk);
-            $res [$splittedFilename] = $content;
-
             $config = new Config();
             $this->filesystem->write($splittedFilename, $content, $config);
-
         }
-        return $res;
     }
 }
