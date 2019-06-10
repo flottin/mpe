@@ -2,13 +2,6 @@
 namespace AppBundle\Util\Filesystem;
 use League\Flysystem\Util;
 
-/**
- * Created by PhpStorm.
- * User: flottin
- * Date: 03/06/2019
- * Time: 21:52
- */
-
 class Filesystem extends \League\Flysystem\Filesystem
 {
     /**
