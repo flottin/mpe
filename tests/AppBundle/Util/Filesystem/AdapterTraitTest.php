@@ -71,13 +71,15 @@ class AdapterTraitTest extends TestCase
         }
         $this->assertSame ( $expected, $actual );
 
-        $actual = $filesystem->read($file['path']);
-        $this->assertSame ( $expected2, $actual );
-
+        if (isset($file)){
+            $actual = $filesystem->read($file['path']);
+            $this->assertSame ( $expected2, $actual );
+        }
     }
 
     public function splitProvider(){
         yield ["12345678901234567890123", 12, '3'];
         yield ["1234567890123456789012", 11, '12'];
+        yield ["", 0, false];
     }
 }

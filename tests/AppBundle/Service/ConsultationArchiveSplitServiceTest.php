@@ -71,7 +71,7 @@ class ConsultationArchiveSplitServiceTest extends TestCase
         $expected = "é";
         $this->assertSame($expected, $actual);
 
-        // la consultationArchive associée doit avoir un statusFragmentation = à true
+        // la consultationArchive associée doit avoir un statusFragmentation = true
         /** @var ConsultationArchive $consultationArchive */
         $consultationArchive = $consultationArchiveBloc->getConsultationArchive ();
         $actual = $consultationArchive->getStatusFragmentation ();

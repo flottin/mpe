@@ -65,6 +65,7 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
         $filesystem = new Filesystem($adapter);
         $this->service->setOutput ( $output );
         $this->service->setFilesystem ( $filesystem );
+        $this->service->setPath($path);
 
         $datas = $this->em
             ->getRepository (ConsultationArchive::class)

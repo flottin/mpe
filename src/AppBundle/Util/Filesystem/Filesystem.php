@@ -9,11 +9,6 @@ class Filesystem extends \League\Flysystem\Filesystem
      */
     public function split ( $path, $chunk )
     {
-        $path    = Util::normalizePath ( $path );
-        $chunk = Util::normalizePath ( $chunk );
-        $this->assertPresent ( $path );
-        $this->assertAbsent ( $chunk );
-
         return $this->getAdapter ()->split ( $path, $chunk );
     }
 
@@ -27,4 +22,5 @@ class Filesystem extends \League\Flysystem\Filesystem
         return (bool)$this->getAdapter ()->remove ( $path );
 
     }
+
 }

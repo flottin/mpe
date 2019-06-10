@@ -40,17 +40,17 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
         $res = [];
         $filepath = $consultationArchive->getNomFichier ();
         $absolutePath = $this->path . $filepath;
-
         try{
+
             if (!$this->filesystem->has($filepath)) {
                 throw new FileNotFoundException($filepath);
             }
             $files = $this->filesystem->split ($absolutePath, $this->chunk);
+
             foreach($files as $file) {
                 $poids = $file['size'];
-                $numeroBloc = $this->extractNumeroBloc ($file['path']);
+                $numeroBloc = $this->extractNumeroBloc ($file['path']) + 1;
                 $consultationArchiveBloc = new ConsulationArchiveBloc();
-                $consultationArchiveBloc->setArchive (false);
                 $consultationArchiveBloc->setDocId ( $file['path'] );
                 $consultationArchiveBloc->setPoidsBloc ($poids);
                 $consultationArchiveBloc->setConsultationArchive ( $consultationArchive );

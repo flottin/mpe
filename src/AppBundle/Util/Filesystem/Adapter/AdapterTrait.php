@@ -11,10 +11,6 @@ trait AdapterTrait
      */
     public function split($absoluteFilenamePath, $chunk, $pad_left = 6)
     {
-        $pathExploded = explode("/", $absoluteFilenamePath);
-        $filename = array_pop($pathExploded);
-        $pathOut =  implode('/', $pathExploded);
-
         $cmd = [
             'split',
             '-b',
@@ -22,17 +18,15 @@ trait AdapterTrait
             '-d',
             '-a'.$pad_left,
             $absoluteFilenamePath,
-            $pathOut .'/'.$filename."-"
+            $absoluteFilenamePath."-"
         ];
-
         $process = $this->processing ($cmd, $this);
 
         if (!$process->isSuccessful()) {
             /** @var Process $process */
             throw new ProcessFailedException($process);
         }
-
-        return $this->splitted($filename, $pathOut);
+        return $this->splitted($absoluteFilenamePath);
     }
 
     /**
@@ -40,10 +34,12 @@ trait AdapterTrait
      * @param $filename
      * @return array
      */
-    public function splitted($filename, $path = '')
+    public function splitted($absoluteFilenamePath)
     {
-        $files = [];
-        foreach ($this->listContents ($path) as $file){
+        $pathExploded   = explode("/", $absoluteFilenamePath);
+        $filename       = array_pop($pathExploded);
+        $files          = [];
+        foreach ($this->listContents ('', true) as $file){
             $path = $file['path'];
             if(strstr ($path, $filename.'-')){
                 $files [] = $file;
