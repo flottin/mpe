@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\ConsulationArchiveBloc;
 use AppBundle\Entity\ConsultationArchive;
+use League\Flysystem\FileNotFoundException;
 
 /**
  * Class ConsultationArchiveSplitService
@@ -23,14 +24,7 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
     public function populate(array $datas = null){
         $res = [];
         foreach($datas as $consultationArchive){
-
-            try{
-                $res[] = $this->split ($consultationArchive);
-            } catch (\Exception $e){
-                // log
-                //var_dump($e);
-                $this->filesystem->remove ($consultationArchive->getNomFichier () . '*');
-            }
+            $res[] = $this->split ($consultationArchive);
         }
         return $res;
     }
@@ -46,10 +40,10 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
         $res = [];
         $filepath = $consultationArchive->getNomFichier ();
         $absolutePath = $this->path . $filepath;
-        try{
 
+        try{
             if (!$this->filesystem->has($filepath)) {
-                throw new \Exception($filepath . " n'existe pas!");
+                throw new FileNotFoundException($filepath);
             }
             $files = $this->filesystem->split ($absolutePath, $this->chunk);
             foreach($files as $file) {
@@ -69,7 +63,8 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
             $this->em->flush ();
 
         } catch (\Exception $e){
-            throw $e;
+            $this->logger->error($e->getMessage ());
+            $this->filesystem->remove ($consultationArchive->getNomFichier () . '*');
         }
 
         return $res;

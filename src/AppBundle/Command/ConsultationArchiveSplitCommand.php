@@ -60,7 +60,7 @@ class ConsultationArchiveSplitCommand extends ContainerAwareCommand
             $output->writeln('The command is already running in another process.');
             return 0;
         }
-        $path = '/var/www/html/test/';
+        $path = '/var/www/html/fichiersArchive/';
         $adapter = new Local($path);
         $filesystem = new Filesystem($adapter);
         $this->service->setOutput ( $output );

@@ -58,7 +58,7 @@ trait AdapterTrait
      */
     public function remove($pathname, $path = ''){
         if(strlen($pathname) < 5){
-            throw new \Exception('pathname should be > 5');
+            throw new \Exception("Can't remove pathname : '$pathname'. It should be > 5 characters!");
         }
         $pattern = str_replace ('*', '(.*)', $pathname);
         foreach ($this->listContents ($path) as $file){

@@ -39,6 +39,9 @@ class AdapterTraitTest extends TestCase
     }
 
     public function provider(){
+        yield ['../test.zip-*', false];
+        yield ['test.zip-*/../testfile', 3];
+        yield ['test.zip-*/../*', false];
         yield ['test.zip-*', 1];
         yield ['*', false];
         yield ['1234', false];
