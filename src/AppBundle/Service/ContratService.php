@@ -20,7 +20,6 @@ class ContratService
         $encoders = [$xmlEncoder];
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
         $normalizer = new ObjectNormalizer($classMetadataFactory);
-        $normalizer->setCircularReferenceLimit(2);
         $normalizer->setCircularReferenceHandler(function ($object) {
             return '';
         });
@@ -45,7 +44,7 @@ class ContratService
      * @param $normalized
      * @return mixed
      */
-    public function handleDonneesAnnuelles($normalized){
+    public function handleModifications($normalized){
         if (empty($normalized['modifications'])){
             unset($normalized['modifications']);
         } else {
@@ -58,7 +57,7 @@ class ContratService
      * @param $normalized
      * @return mixed
      */
-    public function handleModifications($normalized){
+    public function handleDonneesAnnuelles($normalized){
         if (empty($normalized['donneesAnnuelles'])){
             unset($normalized['donneesAnnuelles']);
         } else {
