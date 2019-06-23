@@ -1,17 +1,13 @@
 <?php
-
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
- * Consultation
- *
  * @ORM\Table
  * @ORM\Entity
  */
-class Modification
+class MarchePublie
 {
     /**
      * @var int
@@ -23,14 +19,64 @@ class Modification
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Consultation",cascade={"persist"})
-     * @ORM\JoinColumn(name="id_consultation", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Service",cascade={"persist"})
+     * @ORM\JoinColumn(name="service_id", referencedColumnName="id")
      */
-    private $consultation;
+    private $service;
+
+
 
     /**
-     * @ORM\Column(type="integer", length=255)
+     * @ORM\Column(type="boolean")
      */
-    private $suiviPublicationSn;
+    private $publie;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getService()
+    {
+        return $this->service;
+    }
+
+    /**
+     * @param mixed $service
+     */
+    public function setService($service)
+    {
+        $this->service = $service;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPublie()
+    {
+        return $this->publie;
+    }
+
+    /**
+     * @param mixed $publie
+     */
+    public function setPublie($publie)
+    {
+        $this->publie = $publie;
+    }
 }
 

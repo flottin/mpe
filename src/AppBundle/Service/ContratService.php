@@ -1,118 +1,69 @@
 <?php
-
 namespace AppBundle\Service;
 
-use AppBundle\Entity\ConsulationArchiveBloc;
-use AppBundle\Entity\ConsultationArchive;
-use League\Flysystem\FileNotFoundException;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 
-/**
- * Class ConsultationArchiveSplitService
- * Création des blocs réferencés dans la table 'consultation_archive_bloc'
- * @package AppBundle\Service
- */
-class ConsultationArchiveSplitService extends ConsultationArchiveService
+class ContratService
 {
-    private $path;
-
-    private $chunk = 100;
-
-    /**
-     * @param array|null $datas
-     * @return array|bool
-     */
     public function populate(array $datas = null){
+        $context = [
+            'xml_format_output'=>true,
+            'remove_empty_tags'=>true,
+            'xml_standalone'=> false
+        ];
+        $xmlEncoder = new XmlEncoder('marches' );
+        $encoders = [$xmlEncoder];
+        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+        $normalizer = new ObjectNormalizer($classMetadataFactory);
+        $normalizer->setCircularReferenceLimit(2);
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return '';
+        });
+        $normalizers = [$normalizer];
+        $serializer = new Serializer($normalizers, $encoders);
         $res = [];
-        foreach($datas as $consultationArchive){
-            $res[] = $this->split ($consultationArchive);
+        foreach($datas as $entity){
+            if (strstr(get_class($entity), 'Proxies')) {
+                continue;
+            }
+            $normalized = $serializer->normalize($entity, 'marche', ['groups' => ['marche']]);
+            $normalized = $this->handleModifications($normalized);
+            $normalized = $this->handleDonneesAnnuelles($normalized);
+            $res[] = $normalized;
+
         }
-        return $res;
+        $map['marche']  = $res;
+        return $xmlEncoder->encode($map, 'xml', $context);
     }
 
     /**
-     * @var ConsultationArchive
-     * create entry in consultation_archive_bloc
-     * @param ConsultationArchive $consultationArchive
-     * @return array
-     * @throws \League\Flysystem\FileNotFoundException
-     */
-    public function split(ConsultationArchive $consultationArchive){
-        $res = [];
-        $filepath = $consultationArchive->getNomFichier ();
-        $absolutePath = $this->path . $filepath;
-        try{
-
-            if (!$this->filesystem->has($filepath)) {
-                throw new FileNotFoundException($filepath);
-            }
-            $files = $this->filesystem->split ($absolutePath, $this->chunk);
-
-            foreach($files as $file) {
-                $poids = $file['size'];
-                $numeroBloc = $this->extractNumeroBloc ($file['path']) + 1;
-                $consultationArchiveBloc = new ConsulationArchiveBloc();
-                $consultationArchiveBloc->setDocId ( $file['path'] );
-                $consultationArchiveBloc->setPoidsBloc ($poids);
-                $consultationArchiveBloc->setConsultationArchive ( $consultationArchive );
-                $consultationArchiveBloc->setNumeroBloc ( $numeroBloc );
-                $consultationArchiveBloc->setDateEnvoi ( new \DateTime() );
-                $this->em->persist ( $consultationArchiveBloc );
-                $res[] = $consultationArchiveBloc;
-            }
-            $consultationArchive->setStatusFragmentation (true);
-            $this->em->flush ();
-
-        } catch (\Exception $e){
-            $this->logger->error($e->getMessage ());
-            $this->filesystem->remove ($consultationArchive->getNomFichier () . '*');
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param $str
+     * @param $normalized
      * @return mixed
-     * @throws \Exception
      */
-    public function extractNumeroBloc($str){
-        preg_match('#^(.*)-([0-9]+)$#', $str, $matches);
-        if (isset($matches{2})){
-            return (int)$matches{2};
+    public function handleDonneesAnnuelles($normalized){
+        if (empty($normalized['modifications'])){
+            unset($normalized['modifications']);
         } else {
-            throw new \Exception("Numéro de bloc non extractible pour le chemin : " . $str);
+            $normalized['modifications'] = ['modification' => $normalized['modifications']];
         }
+        return $normalized;
     }
 
     /**
+     * @param $normalized
      * @return mixed
      */
-    public function getPath ()
-    {
-        return $this->path;
-    }
-
-    /**
-     * @param mixed $path
-     */
-    public function setPath ( $path )
-    {
-        $this->path = $path;
-    }
-
-    /**
-     * @return int
-     */
-    public function getChunk ()
-    {
-        return $this->chunk;
-    }
-
-    /**
-     * @param int $chunk
-     */
-    public function setChunk ( $chunk )
-    {
-        $this->chunk = $chunk;
+    public function handleModifications($normalized){
+        if (empty($normalized['donneesAnnuelles'])){
+            unset($normalized['donneesAnnuelles']);
+        } else {
+            $normalized['donneesAnnuelles'] = ['donneeAnnuelle' => $normalized['donneesAnnuelles']];
+        }
+        return $normalized;
     }
 }

@@ -15,18 +15,32 @@ use Doctrine\ORM\Mapping\Column;
  */
 class Consultation
 {
+
     /**
-     * @Id
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
      * @Column(type="string")
      */
     private $organisme;
 
     /**
-     * @Id
      *
      * @ORM\Column(type="string", length=255)
      */
     private $reference;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Service",cascade={"persist"})
+     * @ORM\JoinColumn(name="service_id", referencedColumnName="id")
+     */
+    private $service;
 
     /**
      * @ORM\ManyToOne(targetEntity="EtatConsultation",cascade={"persist"})
@@ -37,7 +51,7 @@ class Consultation
     /**
      * @return mixed
      */
-    public function getOrganisme ()
+    public function getOrganisme()
     {
         return $this->organisme;
     }
@@ -45,7 +59,7 @@ class Consultation
     /**
      * @param mixed $organisme
      */
-    public function setOrganisme ( $organisme )
+    public function setOrganisme($organisme)
     {
         $this->organisme = $organisme;
     }
@@ -53,7 +67,7 @@ class Consultation
     /**
      * @return mixed
      */
-    public function getReference ()
+    public function getReference()
     {
         return $this->reference;
     }
@@ -61,7 +75,7 @@ class Consultation
     /**
      * @param mixed $reference
      */
-    public function setReference ( $reference )
+    public function setReference($reference)
     {
         $this->reference = $reference;
     }
@@ -69,7 +83,23 @@ class Consultation
     /**
      * @return mixed
      */
-    public function getEtatConsultation ()
+    public function getService()
+    {
+        return $this->service;
+    }
+
+    /**
+     * @param mixed $service
+     */
+    public function setService($service)
+    {
+        $this->service = $service;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEtatConsultation()
     {
         return $this->etatConsultation;
     }
@@ -77,9 +107,26 @@ class Consultation
     /**
      * @param mixed $etatConsultation
      */
-    public function setEtatConsultation ( $etatConsultation )
+    public function setEtatConsultation($etatConsultation)
     {
         $this->etatConsultation = $etatConsultation;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 }
 

@@ -3,16 +3,14 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Component\Serializer\Annotation\Groups as Groups;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
- * Consultation
- *
  * @ORM\Table
  * @ORM\Entity
  */
-class Modification
+class Etablissement
 {
     /**
      * @var int
@@ -24,20 +22,53 @@ class Modification
      */
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Contrat",cascade={"persist"}, fetch="EAGER")
-     * @ORM\JoinColumn(name="contrat_id", referencedColumnName="id")
-     */
-    private $contrat;
 
     /**
-     * @ORM\Column(type="integer", length=255)
+     * @ORM\Column(type="string")
+     * @Groups({"marche"})
      */
-    private $suiviPublicationSn;
+    private $name;
 
     /**
      * @return mixed
-     *
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param mixed $code
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+    }
+
+    /**
+     * @ORM\Column(type="string", options={"default": "00033"})
+     * @Groups({"marche"})
+     */
+    private $code;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
      */
     public function getContrat()
     {
@@ -55,33 +86,19 @@ class Modification
     /**
      * @return mixed
      */
-    public function getSuiviPublicationSn()
+    public function getName()
     {
-        return $this->suiviPublicationSn;
+        return $this->name;
     }
 
     /**
-     * @param mixed $suiviPublicationSn
+     * @param mixed $name
      */
-    public function setSuiviPublicationSn($suiviPublicationSn)
+    public function setName($name)
     {
-        $this->suiviPublicationSn = $suiviPublicationSn;
+        $this->name = $name;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
 }
 

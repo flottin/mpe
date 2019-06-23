@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table
  * @ORM\Entity
  */
-class Etablissement
+class Entreprise
 {
     /**
      * @var int
@@ -29,6 +29,27 @@ class Etablissement
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="string")
+     * @Groups({"marche"})
+     */
+    private $siren;
+
+    /**
+     * @return mixed
+     */
+    public function getSiren()
+    {
+        return $this->siren;
+    }
+
+    /**
+     * @param mixed $siren
+     */
+    public function setSiren($siren)
+    {
+        $this->siren = $siren;
+    }
 
 
     /**

@@ -1,15 +1,13 @@
 <?php
-
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 
 /**
  * @ORM\Table
  * @ORM\Entity
  */
-class MarchePublie
+class Service
 {
     /**
      * @var int
@@ -21,13 +19,62 @@ class MarchePublie
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
-    private $service;
+    private $name;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\OneToMany(targetEntity="marchePublie", mappedBy="service", fetch="EAGER")
      */
     private $marchePublie;
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMarchePublie()
+    {
+        return $this->marchePublie;
+    }
+
+    /**
+     * @param mixed $marchePublie
+     */
+    public function setMarchePublie($marchePublie)
+    {
+        $this->marchePublie = $marchePublie;
+    }
+
 }
 

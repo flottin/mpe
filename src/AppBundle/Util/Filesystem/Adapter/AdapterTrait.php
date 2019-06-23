@@ -1,6 +1,9 @@
 <?php
 namespace AppBundle\Util\Filesystem\Adapter;
 
+use Symfony\Component\Debug\Debug;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -11,6 +14,14 @@ trait AdapterTrait
      */
     public function split($absoluteFilenamePath, $chunk, $pad_left = 6)
     {
+$d =new Debug();
+
+
+$request = new Request();
+$request->
+        $filesystem = new Filesystem();
+        //$filesystem->
+
         $cmd = [
             'split',
             '-b',

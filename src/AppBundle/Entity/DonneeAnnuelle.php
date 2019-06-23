@@ -2,6 +2,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Consultation
@@ -9,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table
  * @ORM\Entity
  */
-class DonneesAnnuelles
+class DonneeAnnuelle
 {
     /**
      * @var int
@@ -17,6 +18,7 @@ class DonneesAnnuelles
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"marche"})
      */
     private $id;
 
@@ -28,6 +30,7 @@ class DonneesAnnuelles
 
     /**
      * @ORM\Column(type="integer", length=255)
+     * @Groups({"marche"})
      */
     private $suiviPublicationSn;
 
