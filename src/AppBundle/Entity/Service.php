@@ -2,6 +2,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Table
@@ -15,11 +16,13 @@ class Service
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"marche"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"marche"})
      */
     private $name;
 

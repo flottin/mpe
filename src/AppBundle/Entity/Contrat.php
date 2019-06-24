@@ -37,6 +37,7 @@ class Contrat
     /**
      * @ORM\ManyToOne(targetEntity="Service",cascade={"persist"})
      * @ORM\JoinColumn(name="service_id", referencedColumnName="id")
+     * @Groups({"marche"})
      */
     private $service;
 

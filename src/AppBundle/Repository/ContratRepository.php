@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class ContratRepository extends EntityRepository
 {
-    public function getContrat(){
+    public function getContrat($first = 0, $max = 100){
 
         $query = $this->_em->createQueryBuilder()
             ->select('c')
@@ -45,6 +45,10 @@ class ContratRepository extends EntityRepository
             ->setParameter('suiviPublicationSn', 0)
 
             // gestion des dates de notif
+
+            // paginate
+            //->setFirstResult(0)
+            //->setMaxResults(10)
 
             ->getQuery();
 

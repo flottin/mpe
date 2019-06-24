@@ -46,15 +46,7 @@ class ContratFixture extends Fixture
      */
     public function __construct ( ObjectManager $em )
     {
-        $this->entreprise = new Entreprise();
-        $this->entreprise->setName('Atexo');
-        $this->entreprise->setSiren('440909562');
-        $em->persist($this->entreprise);
 
-        $this->etablissement = new Etablissement();
-        $this->etablissement->setName('Atexo Paris');
-        $this->etablissement->setCode('00033');
-        $em->persist($this->etablissement);
 
         $this->em = $em;
 
@@ -65,6 +57,15 @@ class ContratFixture extends Fixture
      */
     public function load(ObjectManager $em)
     {
+        $this->entreprise = new Entreprise();
+        $this->entreprise->setName('Atexo é&à@');
+        $this->entreprise->setSiren('440909562');
+        $em->persist($this->entreprise);
+
+        $this->etablissement = new Etablissement();
+        $this->etablissement->setName('Atexo Paris');
+        $this->etablissement->setCode('00033');
+        $em->persist($this->etablissement);
 
         $service = new Service();
         $service->setName('Service1');
