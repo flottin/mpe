@@ -20,6 +20,7 @@ class ConsultationArchiveSplitService extends ConsultationArchiveService
     /**
      * @param array|null $datas
      * @return array|bool
+     * @throws FileNotFoundException
      */
     public function populate(array $datas = null){
         $res = [];
