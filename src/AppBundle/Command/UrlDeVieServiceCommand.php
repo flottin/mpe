@@ -1,12 +1,14 @@
 <?php
 namespace AppBundle\Command;
 
-use AppBundle\Service\CryptoService;
-use AppBundle\Service\DisqueService;
 use AppBundle\Service\MultiProcessService;
+use AppBundle\Service\UrlDeVie\CryptoService;
+use AppBundle\Service\UrlDeVie\DisqueService;
+use AppBundle\Service\UrlDeVie\UrlDeVieService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Process\Process;
 
 /**
@@ -14,28 +16,6 @@ use Symfony\Component\Process\Process;
  */
 class UrlDeVieServiceCommand extends AbstractMultiCommand
 {
-    /**
-     * @var CryptoService
-     */
-    private $cryptoService;
-    /**
-     * @var DisqueService
-     */
-    private $disqueService;
-
-
-    /**
-     * TestCommand constructor.
-     * @param $multiprocessService
-     */
-    public function __construct(
-        CryptoService $cryptoService,
-        DisqueService $disqueService
-    ) {
-        parent::__construct();
-        $this->cryptoService = $cryptoService;
-        $this->disqueService = $disqueService;
-    }
 
 
     /**
@@ -43,6 +23,11 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
      */
     protected function configure()
     {
+
+
+
+
+
         $this->setName('z:url-de-vie:service');
         $this->addArgument('service', InputArgument::REQUIRED, "name of service (ie. crypto");
     }
@@ -53,13 +38,33 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $service = $input->getArgument('service');
+        $services = UrlDeVieService::getServices();
         $service = $service . "Service";
-        try{
-            /** @var CryptoService  $service */
-            $service = $this->$service;
-            var_dump($service->getDatas());
-        } catch(\Exception $e) {
-            var_dump($e->getMessage());
+        if (!in_array($service, $services)){
+            $output->writeln("<error>$service is not authorized!</error>" );
+
+            $output->writeln("<info>Authorized services : </info>" );
+
+            foreach ($services as $service){
+                $output->writeln("- $service" );
+            }
+
+        } else {
+            $service = "\AppBundle\Service\UrlDeVie\\" .$service;
+            try{
+
+                /** @var CryptoService  $service */
+                $className = $service;
+                $s = new $className();
+                var_dump($s);
+                var_dump($s->getDatas());
+            } catch(\Exception $e) {
+                var_dump($e->getMessage());
+
+            }
         }
+
+
+
     }
 }
