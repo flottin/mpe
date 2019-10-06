@@ -39,3 +39,10 @@ services:
         arguments: ["@logger"]
         tags:
         - { name: monolog.logger, channel: consultation_archive }
+
+    atexo.mount-manager:
+        class:  AppBundle\Util\FileSystem\AtexoMountManager
+        autowire: false
+        autoconfigure: false
+        arguments:
+           $document_root_dir: "/mnt;/mnt2;/mnt3;"

@@ -18,7 +18,6 @@ class Filesystem extends \League\Flysystem\Filesystem
     public function remove ( $path )
     {
         $path    = Util::normalizePath ( $path );
-        //$this->assertPresent ( $path );
         return (bool)$this->getAdapter ()->remove ( $path );
 
     }
