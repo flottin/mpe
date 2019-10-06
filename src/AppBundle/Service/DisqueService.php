@@ -4,7 +4,7 @@ namespace AppBundle\Service;
 
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class CryptoService
+class DisqueService
 {
 
 
@@ -18,11 +18,7 @@ class CryptoService
         $this->stopwatch = $stopwatch;
 
 
-    }
 
-    public function getDatas(){
-        $result = ['ok'];
-        return $result;
 
     }
 

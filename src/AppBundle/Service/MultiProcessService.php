@@ -33,7 +33,7 @@ class MultiProcessService
         $this->stopwatch = $stopwatch;
     }
 
-    public function launch()
+    public function launch($commands)
     {
         $this->setMaxProcess(2);
 var_dump(__method__);
