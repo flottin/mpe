@@ -3,9 +3,12 @@ namespace AppBundle\Command;
 
 use AppBundle\Service\UrlDeVie\CryptoService;
 use AppBundle\Service\UrlDeVie\DisqueService;
+use AppBundle\Service\MultiProcessService;
+use AppBundle\Service\UrlDeVie\UrlDeVieService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 class UrlDeVieServiceCommand extends AbstractMultiCommand
 {
@@ -37,6 +40,11 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
      */
     protected function configure()
     {
+
+
+
+
+
         $this->setName('z:url-de-vie:service');
         $this->addArgument('service', InputArgument::REQUIRED, "name of service (ie. crypto");
     }
@@ -47,6 +55,7 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $service = $input->getArgument('service');
+        $services = UrlDeVieService::getServices();
         $service = $service . "Service";
         try{
             /** @var CryptoService  $service */
@@ -55,5 +64,8 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
         } catch(\Exception $e) {
             var_dump($e->getMessage());
         }
+
+
+
     }
 }
