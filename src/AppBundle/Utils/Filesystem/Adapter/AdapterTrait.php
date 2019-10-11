@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Util\Filesystem\Adapter;
+namespace AppBundle\Utils\Filesystem\Adapter;
 
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Filesystem\Filesystem;

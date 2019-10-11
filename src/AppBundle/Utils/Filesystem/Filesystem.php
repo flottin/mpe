@@ -1,5 +1,7 @@
 <?php
-namespace AppBundle\Util\Filesystem;
+namespace AppBundle\Utils\Filesystem;
+
+use AppBundle\Utils\Filesystem\Adapter\ZipArchiveAdapter;
 use League\Flysystem\Util;
 
 class Filesystem extends \League\Flysystem\Filesystem
@@ -19,7 +21,15 @@ class Filesystem extends \League\Flysystem\Filesystem
     {
         $path    = Util::normalizePath ( $path );
         return (bool)$this->getAdapter ()->remove ( $path );
-
     }
 
+    /**
+     * @param $src
+     * @param $dst
+     */
+    public function addFile($src, $dst){
+        /** @var ZipArchiveAdapter $adapter */
+        $adapter = $this->getAdapter();
+        $adapter->addFile($src, $dst);
+    }
 }

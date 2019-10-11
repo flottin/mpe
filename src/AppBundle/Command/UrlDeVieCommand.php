@@ -3,6 +3,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Service\CryptoService;
 use AppBundle\Service\MultiProcessService;
+use AppBundle\Service\ZipService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
@@ -35,6 +36,10 @@ class UrlDeVieCommand extends AbstractMultiCommand
      */
     protected function configure()
     {
+
+
+
+
         $this->setName('z:url-de-vie');
     }
 
@@ -43,18 +48,22 @@ class UrlDeVieCommand extends AbstractMultiCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-        $services = ['Crypto', 'Signature', 'Atlas', 'Disque', 'Sgmap', 'ApiEntreprise', 'Dume', 'Boamp', 'Chorus' ];
-        $commands = [];
-        foreach($services as $service){
-            $cmd = "php bin/console z:url-de-vie:service $service";
-            $commands[] = $cmd;
-        }
+        $service = new ZipService();
+        $service->create();
 
 
-        $output = $this->multiprocessService->launch($commands);
 
-        die;
+//        $services = ['Crypto', 'Signature', 'Atlas', 'Disque', 'Sgmap', 'ApiEntreprise', 'Dume', 'Boamp', 'Chorus' ];
+//        $commands = [];
+//        foreach($services as $service){
+//            $cmd = "php bin/console z:url-de-vie:service $service";
+//            $commands[] = $cmd;
+//        }
+//
+//
+//        $output = $this->multiprocessService->launch($commands);
+//
+//        die;
 
     }
 }

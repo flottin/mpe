@@ -1,17 +1,12 @@
 <?php
 namespace AppBundle\Command;
 
-use AppBundle\Service\CryptoService;
-use AppBundle\Service\DisqueService;
-use AppBundle\Service\MultiProcessService;
+use AppBundle\Service\UrlDeVie\CryptoService;
+use AppBundle\Service\UrlDeVie\DisqueService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
-/**
- * Class TestCommand
- */
 class UrlDeVieServiceCommand extends AbstractMultiCommand
 {
     /**
@@ -23,10 +18,10 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
      */
     private $disqueService;
 
-
     /**
-     * TestCommand constructor.
-     * @param $multiprocessService
+     * UrlDeVieServiceCommand constructor.
+     * @param CryptoService $cryptoService
+     * @param DisqueService $disqueService
      */
     public function __construct(
         CryptoService $cryptoService,
@@ -36,7 +31,6 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
         $this->cryptoService = $cryptoService;
         $this->disqueService = $disqueService;
     }
-
 
     /**
      * {@inheritdoc}
@@ -57,7 +51,7 @@ class UrlDeVieServiceCommand extends AbstractMultiCommand
         try{
             /** @var CryptoService  $service */
             $service = $this->$service;
-            var_dump($service->getDatas());
+            var_dump($service->getResult());
         } catch(\Exception $e) {
             var_dump($e->getMessage());
         }

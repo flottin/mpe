@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Service\MultiProcessService;
 use AppBundle\Service\ReportService;
-use AppBundle\Util\Filesystem\AtexoMountManager;
+use AppBundle\Util\Filesystem\MountManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,15 +38,6 @@ MultiProcessService $multiProcessService)
     public function indexAction(Request $request)
     {
 
-
-        $this->multiProcessService->launch();
-
-
-        die;
-
-
-
-
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
@@ -60,5 +51,20 @@ MultiProcessService $multiProcessService)
     {
        $datas = $this->reportService->getData();
        return $this->render('default/rapport.html.twig', $datas);
+    }
+
+    /**
+     * @Route("/zip")
+     */
+    public function zip(Request $request)
+    {
+
+       // $adapter = new
+
+
+        // replace this example code with whatever you need
+        return $this->render('default/index.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+        ]);
     }
 }

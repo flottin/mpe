@@ -1,5 +1,5 @@
 <?php
-namespace AppBundle\Util\Filesystem\Adapter;
+namespace AppBundle\Utils\Filesystem\Adapter;
 
 use Symfony\Component\Process\Process;
 
