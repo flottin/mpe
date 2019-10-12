@@ -45,7 +45,7 @@ doctrine:
 
         connections:
             default:
-                dbname:               database
+                dbname:               mpe
                 host:                 localhost
                 user:                 root
                 password:             bb
