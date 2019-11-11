@@ -4,27 +4,24 @@ namespace AppBundle\Service;
 use AppBundle\Utils\Filesystem\Adapter\Local;
 use AppBundle\Utils\Filesystem\Adapter\ZipArchiveAdapter;
 use AppBundle\Utils\Filesystem\Filesystem;
-use AppBundle\Utils\Filesystem\MountManager;
 
 class ZipService
 {
-   public function create(){
+   public function __construct(){
        $adapter = new Local('/tmp');
        $this->fs = new Filesystem($adapter);
        $zipAdapter = new ZipArchiveAdapter('/tmp/test.zip');
        $this->fsZip = new Filesystem($zipAdapter);
-
-       $this->mountManager = new MountManager([
-           'fs'=>  $this->fs,
-           'zip' => $this->fsZip
-       ]);
+       $this->createFromDir('dce');
    }
 
     /**
      * @param $dir
      */
    public function createFromDir($dir){
-       foreach ($this->fs->listContents('dce', true) as $item){
+       //var_dump($dir, $this->fs);
+       foreach ($this->fs->listContents($dir, true) as $item){
+
            if ($item['type'] == "dir"){
                if (!$this->fsZip->has($item['path'])){
                    $this->fsZip->createDir($item['path']);
@@ -33,10 +30,7 @@ class ZipService
 
            if ($item['type'] == "file"){
                if (!$this->fsZip->has($item['path'])){
-                   $this->mountManager->addFile(
-                       'fs://' . $item['path'],
-                       'zip://'.$item['path']
-                   );
+                   $this->fsZip->addFile($item['path']);
                }
            }
        }
