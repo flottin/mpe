@@ -58,6 +58,5 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ansible_mpe_docker" />
   </component>
 </module>

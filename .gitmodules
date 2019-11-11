@@ -1,0 +1,3 @@
+[submodule "docker"]
+	path = docker
+	url = ../ansible_mpe_docker
