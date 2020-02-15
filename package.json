@@ -3,7 +3,7 @@
     "npm": "^6.13.1",
     "raphael": "^2.3.0",
     "sass": "^1.23.7",
-    "yarn": "^1.21.1"
+    "yarn": "^1.22.0"
   },
   "devDependencies": {
     "@symfony/webpack-encore": "^0.28.2",
