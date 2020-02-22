@@ -1,42 +1,21 @@
-version: '3'
+version: '2'
 services:
-  web:
-    #build: ./web
+  mpe:
+    image: 'mpe_image:latest'
+    container_name: 'mpe'
+    hostname: 'mpe'
+    cap_add:
+      - SYS_ADMIN
     ports:
-      - '83:80'
+      - "80:80"
+#      - "443:443"
+    tmpfs:
+      - /run
+      - /run/lock
     volumes:
-      - ../:/var/www/html
-      - ./apache.conf:/etc/apache2/sites-enabled/000-default.conf
-      - ./xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-      #- ./.bashrc:/root/.bashrc
-    links:
-      - database
+      - ../:/data/apache2/mpe/htdocs
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./root/bash_history:/root/.bash_history
 
-  database:
-    image: 'mariadb:10.0'
-    ports:
-      - '3307:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: mpe_dev
-      MYSQL_DATABASE: mpe
-      MYSQL_USER: mpe_dev
-      MYSQL_PASSWORD: mpe_dev
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mpe
-      MYSQL_USER: atexo_dev
-      MYSQL_PASSWORD: mpe_dev
-      PMA_ARBITRARY: 1
-      PMA_HOST: database
-    restart: always
-    ports:
-      - 8080:80
-    volumes:
-      - /sessions
-    links:
-      - database
+    command:
+      - /lib/systemd/systemd

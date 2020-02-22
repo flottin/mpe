@@ -2,12 +2,41 @@
 namespace AppBundle\Service\UrlDeVie;
 
 
-use Symfony\Component\Finder\Finder;
-
 class UrlDeVieService
 {
+    protected $url;
 
-    private $url;
+    protected $path;
+
+    protected $name;
+
+    protected $result = [];
+
+
+    public function content(){
+        $result = new ResultService();
+        $result->setLevel(ResultService::OK);
+        $result->setName(__method__);
+        $result->setContent('<xml></xml>');
+        $this->addResult($result);
+    }
+
+    public function ping(){
+        $result = new ResultService();
+        $result->setLevel(ResultService::FAILED);
+        $result->setName(__method__);
+        $result->setMsg('Error with url : ' . $this->url);
+        $this->addResult($result);
+    }
+
+    public function space(){
+        $result = new ResultService();
+        $result->setLevel(ResultService::WARNING);
+        $result->setName(__method__);
+        $result->setMsg('Only 80% left on : ' . $this->path);
+        $this->addResult($result);
+    }
+
 
     /**
      * @return mixed
@@ -25,34 +54,35 @@ class UrlDeVieService
         $this->url = $url;
     }
 
-    const WARNING = 2;
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
-    const FAILED = 0;
-
-    const OK = 1;
-
-    public function getDatas(){
-        $result = ['ok'];
-        return $result;
-
+    /**
+     * @param mixed $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
     }
 
     /**
      * @return array
-     * $services = ['Crypto', 'Signature', 'Atlas', 'Disque', 'Sgmap', 'ApiEntreprise', 'Dume', 'Boamp', 'Chorus' ];
      */
-    public static function getServices()
+    public function getResult()
     {
-        $finder = new Finder();
-
-        $finder->in('src/AppBundle/service/urlDeVie');
-
-        $services = [];
-        foreach ($finder as $file){
-            if ('UrlDeVieService.php' !== $file->getFilename())
-                $services [] = str_replace('.php', '', $file->getFilename());
-        }
-        return $services;
+        return $this->result;
     }
 
+    /**
+     * @param array $result
+     */
+    public function addResult($result)
+    {
+        $this->result[$this->name][] = $result;
+    }
 }

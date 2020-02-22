@@ -53,3 +53,11 @@
 /.idea/vcs.xml
 /.idea/runConfigurations/consultation_archive_fichier.xml
 /.idea/php-test-framework.xml
+/phpunit
+/.phpunit.result.cache
+/node_modules
+/web/build
+var/SymfonyRequirements.php
+bin/symfony_requirements
+
+

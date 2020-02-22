@@ -27,7 +27,7 @@ class Filesystem extends \League\Flysystem\Filesystem
      * @param $src
      * @param $dst
      */
-    public function addFile($src, $dst){
+    public function addFile($src, $dst = null){
         /** @var ZipArchiveAdapter $adapter */
         $adapter = $this->getAdapter();
         $adapter->addFile($src, $dst);
