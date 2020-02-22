@@ -63,21 +63,6 @@ SessionInterface $session
     }
 
     /**
-     * @param $siret
-     * @return mixed|string
-     */
-    public function showSiretError($siret){
-        $res = false;
-        $isValid = $this->isLuhnNum($siret);
-        if (false === $isValid && null === $this->session->get('showSiretModal')){
-            $res = true;
-            $this->session->set('showSiretModal', false);
-        }
-        return $res;
-    }
-
-
-    /**
      * @Route("/entreprise/verification")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -88,8 +73,10 @@ SessionInterface $session
         $siretExemple               = '34368801600504';
         $params  ['siretExemple']   = $siretExemple;
         $params  ['siret']          = $siret;
-        if (true === $this->showSiretError($siret)){
-            $params  ['showSiretError'] = $siret;
+        $isValid = $this->isLuhnNum($siret);
+        if (false === $isValid && null === $this->session->get('siretError')){
+            $this->addFlash('siretError', $siret);
+            $this->session->set('siretError', true);
         }
         return $this->render('entreprise/index.html.twig', $params);
     }
