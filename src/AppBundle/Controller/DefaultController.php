@@ -73,6 +73,7 @@ SessionInterface $session
             $res = true;
             $this->session->set('showSiretModal', false);
         }
+        return true;
         return $res;
     }
 
@@ -96,13 +97,16 @@ SessionInterface $session
 
     /**
      * @Route("/entreprise/verification/modal/{siret}")
-     * @param String $siret
+     * @param string $siret
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function verificationModalAction(String $siret)
+    public function verificationModalAction(string $siret)
     {
         return $this->render('entreprise/modal.html.twig', [
             'siret' => $siret,
+            'adresse' => '15222, rue des oiseaux',
+            'cp' => 75000,
+            'ville' => 'Paris'
         ]);
     }
 
