@@ -8,36 +8,20 @@ Page d'acceuil après authentification !
 SiretExemple : {{ siretExemple }}
 
 <form>
-    <input type="text" name="siret" value="{{ siret }}">
+    <input type="text" name="siret" value="{% if siret is defined %}{{ siret }}{% endif %}">
     <input type="submit" >
 </form>
 
 <!-- Modal -->
-<div id="verificationEntreprise" ></div>
 
 </body>
 
-
-
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script>
-    let $ = jQuery
-    let showSiretModal = {{ showSiretModal }};
-    let siret = {{ siret }};
-    let urlModal = "/entreprise/verification/modal/" + siret;
 
-    $(window).on('load' , function(){
-        if (showSiretModal == true){
-            $('#verificationEntreprise').load(urlModal,
-                function() {
-                    $('#verificationSiretModal').modal('show')
-                }
-            );
-        }
-    });
-
-</script>
-
+<script src="/bundles/app/entrepise.js"
+        showSiretModal="{% if showSiretModal is defined %}{{ showSiretModal }}{% endif %}"
+        siret="{% if siret is defined %}{{ siret }}{% endif %}"
+></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
