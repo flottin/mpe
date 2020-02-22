@@ -7,6 +7,7 @@ use AppBundle\Service\ReportService;
 use AppBundle\Util\Filesystem\MountManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
@@ -20,10 +21,16 @@ class DefaultController extends Controller
      */
     private $multiProcessService;
 
+    private $session;
+
     public function __construct(ReportService $reportService,
-MultiProcessService $multiProcessService)
+MultiProcessService $multiProcessService,
+SessionInterface $session
+
+)
     {
         $this->reportService = $reportService;
+        $this->session = $session;
 
         $this->multiProcessService = $multiProcessService;
     }
@@ -55,38 +62,52 @@ MultiProcessService $multiProcessService)
         return (($tot % 10) == 0);
     }
 
+    /**
+     * @param $siret
+     * @return mixed|string
+     */
+    public function showSiretModal($siret){
+        $show = false;
+        $isValid = $this->isLuhnNum($siret);
+        if (false === $isValid){
+            $show = true;
+            if (false === $this->session->get('showSiretModal')){
+                $show = $this->session->get('showSiretModal');
+            } else {
+                $this->session->set('showSiretModal', false);
+            }
+        }
+        return $show === true ? 'true' : 'false';
+    }
+
 
     /**
- * @Route("/entreprise/verification")
- */
+     * @Route("/entreprise/verification")
+     */
     public function verificationAction(Request $request)
     {
-
         $siret = $request->get('siret');
         $siretExemple = '34368801600504';
+        $showSiretModal = $this->showSiretModal($siret);
 
-        $isValid = $this->isLuhnNum($siret);
-
-        $isValidString = $isValid ? 'true' : 'false';
-
-
-        // replace this example code with whatever you need
         return $this->render('entreprise/index.html.twig',
-            ['isValidSiret' => $isValidString,
+            [
+                'showSiretModal' => $showSiretModal,
                 'siret' => $siret,
                 'siretExemple' => $siretExemple,
-                ]);
+            ]
+        );
     }
 
     /**
-     * @Route("/entreprise/verification/modal")
+     * @Route("/entreprise/verification/modal/{siret}")
+     * @param String $siret
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function verificationModalAction(Request $request)
+    public function verificationModalAction(String $siret)
     {
-
-        // replace this example code with whatever you need
         return $this->render('entreprise/modal.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'siret' => $siret,
         ]);
     }
 

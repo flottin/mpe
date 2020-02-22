@@ -8,8 +8,8 @@ Page d'acceuil après authentification !
 SiretExemple : {{ siretExemple }}
 
 <form>
-    <input type="text" name="siret">
-    <input type="submit">
+    <input type="text" name="siret" value="{{ siret }}">
+    <input type="submit" >
 </form>
 
 <!-- Modal -->
@@ -21,20 +21,19 @@ SiretExemple : {{ siretExemple }}
 
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <script>
-    jQuery.noConflict();
     let $ = jQuery
-    let isValidSiret = {{ isValidSiret }}
+    let showSiretModal = {{ showSiretModal }};
+    let siret = {{ siret }};
+    let urlModal = "/entreprise/verification/modal/" + siret;
 
     $(window).on('load' , function(){
-        if (isValidSiret == false){
-            $('#verificationEntreprise' +
-                '').load("/entreprise/verification/modal",
+        if (showSiretModal == true){
+            $('#verificationEntreprise').load(urlModal,
                 function() {
-                    $('#exampleModal').modal('show')
+                    $('#verificationSiretModal').modal('show')
                 }
             );
         }
-
     });
 
 </script>
