@@ -69,13 +69,9 @@ SessionInterface $session
     public function showSiretError($siret){
         $res = false;
         $isValid = $this->isLuhnNum($siret);
-        if (false === $isValid){
+        if (false === $isValid && null === $this->session->get('showSiretModal')){
             $res = true;
-            if (false === $this->session->get('showSiretModal')){
-                $res = $this->session->get('showSiretModal');
-            } else {
-                $this->session->set('showSiretModal', false);
-            }
+            $this->session->set('showSiretModal', false);
         }
         return $res;
     }
