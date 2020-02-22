@@ -73,7 +73,6 @@ SessionInterface $session
             $res = true;
             $this->session->set('showSiretModal', false);
         }
-        return true;
         return $res;
     }
 
