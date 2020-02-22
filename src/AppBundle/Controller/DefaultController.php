@@ -66,18 +66,18 @@ SessionInterface $session
      * @param $siret
      * @return mixed|string
      */
-    public function showSiretModal($siret){
-        $show = false;
+    public function showSiretError($siret){
+        $res = false;
         $isValid = $this->isLuhnNum($siret);
         if (false === $isValid){
-            $show = true;
+            $res = true;
             if (false === $this->session->get('showSiretModal')){
-                $show = $this->session->get('showSiretModal');
+                $res = $this->session->get('showSiretModal');
             } else {
                 $this->session->set('showSiretModal', false);
             }
         }
-        return $show === true ? 'true' : 'false';
+        return $res;
     }
 
 
@@ -88,17 +88,14 @@ SessionInterface $session
      */
     public function verificationAction(Request $request)
     {
-        $siret = $request->get('siret');
-        $siretExemple = '34368801600504';
-        $showSiretModal = $this->showSiretModal($siret);
-
-        return $this->render('entreprise/index.html.twig',
-            [
-                'showSiretModal' => $showSiretModal,
-                'siret' => $siret,
-                'siretExemple' => $siretExemple,
-            ]
-        );
+        $siret                      = $request->get('siret');
+        $siretExemple               = '34368801600504';
+        $params  ['siretExemple']   = $siretExemple;
+        $params  ['siret']          = $siret;
+        if (true === $this->showSiretError($siret)){
+            $params  ['showSiretError'] = $siret;
+        }
+        return $this->render('entreprise/index.html.twig', $params);
     }
 
     /**
