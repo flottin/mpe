@@ -16,7 +16,7 @@ SiretExemple : {{ siretExemple }}
 
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
-{% for siret in app.flashes('siretError') %}
+{% for siret in app.flashes('siretError')|slice(0,1) %}
 <script src="/bundles/app/entreprise.js"
         url="/entreprise/verification/modal/{{ siret }}"></script>
 {% endfor %}
