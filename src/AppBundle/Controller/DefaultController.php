@@ -7,6 +7,7 @@ use AppBundle\Service\ReportService;
 use AppBundle\Util\Filesystem\MountManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends Controller
@@ -20,17 +21,106 @@ class DefaultController extends Controller
      */
     private $multiProcessService;
 
+    private $session;
+
     public function __construct(ReportService $reportService,
-MultiProcessService $multiProcessService)
+MultiProcessService $multiProcessService,
+SessionInterface $session
+
+)
     {
         $this->reportService = $reportService;
+        $this->session = $session;
 
         $this->multiProcessService = $multiProcessService;
     }
 
 
+    //Fonction algorithme de Luhn
+    public function isLuhnNum($num)
+    {
+        //longueur de la chaine $num
+        $length = strlen($num);
+
+        //resultat de l'addition de tous les chiffres
+        $tot = 0;
+        for($i=$length-1;$i>=0;$i--)
+        {
+            $digit = substr($num, $i, 1);
+
+            if ((($length - $i) % 2) == 0)
+            {
+                $digit = $digit*2;
+                if ($digit>9)
+                {
+                    $digit = $digit-9;
+                }
+            }
+            $tot += $digit;
+        }
+
+        return (($tot % 10) == 0);
+    }
+
+    /**
+     * @param $siret
+     * @return mixed|string
+     */
+    public function showSiretError($siret){
+        $res = false;
+        $isValid = $this->isLuhnNum($siret);
+        if (false === $isValid){
+            $res = true;
+            if (false === $this->session->get('showSiretModal')){
+                $res = $this->session->get('showSiretModal');
+            } else {
+                $this->session->set('showSiretModal', false);
+            }
+        }
+        return $res;
+    }
 
 
+    /**
+     * @Route("/entreprise/verification")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function verificationAction(Request $request)
+    {
+        $siret                      = $request->get('siret');
+        $siretExemple               = '34368801600504';
+        $params  ['siretExemple']   = $siretExemple;
+        $params  ['siret']          = $siret;
+        if (true === $this->showSiretError($siret)){
+            $params  ['showSiretError'] = $siret;
+        }
+        return $this->render('entreprise/index.html.twig', $params);
+    }
+
+    /**
+     * @Route("/entreprise/verification/modal/{siret}")
+     * @param String $siret
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function verificationModalAction(String $siret)
+    {
+        return $this->render('entreprise/modal.html.twig', [
+            'siret' => $siret,
+        ]);
+    }
+
+    /**
+     * @Route("/api")
+     */
+    public function apiAction(Request $request)
+    {
+return $this->json([]);
+        // replace this example code with whatever you need
+        return $this->render('default/index.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+        ]);
+    }
 
     /**
      * @Route("/", name="homepage")

@@ -56,4 +56,8 @@
 /phpunit
 /.phpunit.result.cache
 /node_modules
+/web/build
+var/SymfonyRequirements.php
+bin/symfony_requirements
+
 

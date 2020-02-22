@@ -1,0 +1,26 @@
+<!-- Modal de verification siret entreprise -->
+<div class="modal show fade" id="verificationSiretModal" tabindex="-1" role="dialog" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Verification siret entreprise</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    Votre siret "{{ siret }}" n'est pas valide  !
+                    Merci de le modifier sur votre <a href="">espace d'administration</a> !
+                </div>
+                <h1 class="fa fa-university" > Nom de l'entreprise</h1>
+                <hr>
+                <h1 class="fa fa-building" > Nom de l'établissement</h1>
+                <hr>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
