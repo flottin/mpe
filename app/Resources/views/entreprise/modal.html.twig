@@ -13,10 +13,21 @@
                     Votre siret "{{ siret }}" n'est pas valide  !
                     Merci de le modifier sur votre <a href="">espace d'administration</a> !
                 </div>
-                <h1 class="fa fa-university" > Nom de l'entreprise</h1>
+                <h1 class="fa fa-university" > Coordonnées de l'entreprise</h1>
                 <hr>
-                <h1 class="fa fa-building" > Nom de l'établissement</h1>
+                <ul>
+                    <li>Adresse: {{ adresse }}</li>
+                    <li>Code Postal: {{ cp }}</li>
+                    <li>Ville: {{ ville }}</li>
+                </ul>
                 <hr>
+                <h1 class="fa fa-building" > Coordonnées de l'établissement</h1>
+                <hr>
+                <ul>
+                    <li>Adresse: {{ adresse }}</li>
+                    <li>Code Postal: {{ cp }}</li>
+                    <li>Ville: {{ ville }}</li>
+                </ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
