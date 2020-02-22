@@ -83,6 +83,8 @@ SessionInterface $session
 
     /**
      * @Route("/entreprise/verification")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function verificationAction(Request $request)
     {
